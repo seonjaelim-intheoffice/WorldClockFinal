@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Clock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F7F9FC;
+  --white: #FFFFFF;
+  --border: #E4EAF2;
+  --border-strong: #C8D6E8;
+  --blue: #2563EB;
+  --blue-light: #EEF3FF;
+  --blue-mid: #BFCFF9;
+  --blue-dark: #1D4ED8;
+  --blue-muted: #6B8CC4;
+  --text: #0F1B2D;
+  --text-sec: #4F6180;
+  --text-dim: #9BADC4;
+  --red: #DC2626;
+  --red-light: #FFF0F0;
+  --red-border: #FBBABA;
+  --sans: 'Plus Jakarta Sans', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --r: 14px;
+  --r-sm: 9px;
+}
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+/* Header */
+.hdr {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 36px;
+}
+h1 {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+h1 span { color: var(--blue); }
+.today-str {
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 0.01em;
+  padding-bottom: 3px;
+}
+
+/* Section tag */
+.stag {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
+
+/* Converter */
+.converter {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 20px 22px;
+  margin-bottom: 32px;
+}
+
+.conv-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.conv-block {
+  display: flex;
+  align-items: center;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  flex: 1;
+  min-width: 200px;
+}
+
+.conv-block input[type="time"] {
+  font-family: var(--mono);
+  font-size: 15px;
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--border);
+  outline: none;
+  padding: 10px 12px;
+  color: var(--text);
+  width: 108px;
+  flex-shrink: 0;
+}
+
+.conv-block select {
+  font-family: var(--sans);
+  font-size: 13px;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 10px 32px 10px 12px;
+  color: var(--text-sec);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239BADC4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  flex: 1;
+}
+
+.conv-arrow {
+  font-size: 16px;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.conv-result {
+  background: var(--blue-light);
+  border: 1px solid var(--blue-mid);
+  border-radius: var(--r-sm);
+  padding: 10px 16px;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--blue-dark);
+  font-weight: 500;
+  white-space: nowrap;
+  min-width: 160px;
+}
+
+/* Clocks header */
+.clocks-hdr {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.drag-tip {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+/* Cards */
+#clockList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.clock-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  cursor: grab;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  animation: up 0.3s both;
+}
+.clock-card:hover { border-color: var(--border-strong); box-shadow: 0 2px 12px rgba(37,99,235,0.06); }
+.clock-card:active { cursor: grabbing; }
+.clock-card.dragging { opacity: 0.4; }
+.clock-card.drag-over { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.10); }
+
+@keyframes up {
+  from { opacity:0; transform: translateY(6px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/* Holiday card styling */
+.clock-card.is-holiday {
+  border-color: var(--red-border);
+  background: var(--red-light);
+}
+.clock-card.is-holiday:hover {
+  border-color: #F87171;
+  box-shadow: 0 2px 12px rgba(220,38,38,0.08);
+}
+
+.card-main {
+  display: flex;
+  align-items: center;
+  padding: 16px 18px;
+  gap: 14px;
+}
+
+/* Blue top stripe for Korea */
+.clock-card.is-korea:not(.is-holiday) {
+  border-top: 2.5px solid var(--blue);
+}
+
+/* Red top stripe for holiday */
+.clock-card.is-holiday {
+  border-top: 2.5px solid var(--red);
+}
+
+.handle {
+  display: flex;
+  flex-direction: column;
+  gap: 3.5px;
+  opacity: 0.18;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+.clock-card:hover .handle { opacity: 0.45; }
+.handle span {
+  display: block;
+  width: 14px;
+  height: 1.5px;
+  background: var(--text);
+  border-radius: 2px;
+}
+
+.flag-box {
+  font-size: 26px;
+  line-height: 1;
+  flex-shrink: 0;
+  width: 32px;
+  text-align: center;
+}
+
+.card-info { flex: 1; min-width: 0; }
+
+.cname {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.ctz { font-size: 11px; color: var(--text-dim); }
+
+.card-time { text-align: right; flex-shrink: 0; }
+
+.time-main {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.tdig {
+  font-family: var(--mono);
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: -0.03em;
+}
+
+.tampm {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--blue-muted);
+  letter-spacing: 0.05em;
+  padding-bottom: 2px;
+}
+
+.tdate {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 3px;
+}
+
+/* Holiday pill */
+.hol-pill {
+  display: none;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--red);
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+.clock-card.is-holiday .hol-pill { display: inline-block; }
+
+/* Holiday footer banner */
+.hol-footer {
+  display: none;
+  background: #FEE2E2;
+  border-top: 1px solid var(--red-border);
+  padding: 6px 18px 6px 64px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--red);
+  letter-spacing: 0.02em;
+}
+.clock-card.is-holiday .hol-footer { display: block; }
+
+@media (max-width: 500px) {
+  .conv-row { flex-direction: column; align-items: stretch; }
+  .conv-result { min-width: auto; }
+  .hdr { flex-direction: column; align-items: flex-start; gap: 6px; }
+  body { padding: 28px 16px 60px; }
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <h1>World <span>Clock</span></h1>
+  <div class="today-str" id="todayStr"></div>
+</header>
+
+<div class="stag">시간대 변환</div>
+<div class="converter">
+  <div class="conv-row">
+    <div class="conv-block">
+      <input type="time" id="fromTime" value="09:00">
+      <select id="fromTz"></select>
+    </div>
+    <span class="conv-arrow">→</span>
+    <div class="conv-block" style="max-width:200px; flex:0 1 200px;">
+      <select id="toTz" style="width:100%;"></select>
+    </div>
+    <div class="conv-result" id="convResult">—</div>
+  </div>
+</div>
+
+<div class="clocks-hdr">
+  <div class="stag" style="margin-bottom:0">현지 시각</div>
+  <div class="drag-tip">드래그로 순서 변경</div>
+</div>
+<div id="clockList"></div>
+
+<script>
+const C = [
+  { id:'kr', name:'한국',           tz:'Asia/Seoul',       flag:'🇰🇷', tzl:'UTC +9',       korea:true },
+  { id:'vn', name:'베트남',         tz:'Asia/Ho_Chi_Minh', flag:'🇻🇳', tzl:'UTC +7' },
+  { id:'sa', name:'사우디아라비아', tz:'Asia/Riyadh',       flag:'🇸🇦', tzl:'UTC +3' },
+  { id:'eg', name:'이집트',         tz:'Africa/Cairo',      flag:'🇪🇬', tzl:'UTC +2 / +3' },
+  { id:'co', name:'콜롬비아',       tz:'America/Bogota',    flag:'🇨🇴', tzl:'UTC −5' },
+  { id:'se', name:'스웨덴',         tz:'Europe/Stockholm',  flag:'🇸🇪', tzl:'UTC +1 / +2' },
+  { id:'au', name:'호주 (시드니)',   tz:'Australia/Sydney',  flag:'🇦🇺', tzl:'UTC +10 / +11' },
+];
+
+const H = {
+  kr:[{m:1,d:1,n:'신정'},{m:1,d:28,n:'설날 연휴'},{m:1,d:29,n:'설날'},{m:1,d:30,n:'설날 연휴'},{m:3,d:1,n:'삼일절'},{m:5,d:1,n:'근로자의 날'},{m:5,d:5,n:'어린이날'},{m:5,d:22,n:'부처님 오신날'},{m:6,d:6,n:'현충일'},{m:8,d:15,n:'광복절'},{m:9,d:24,n:'추석 연휴'},{m:9,d:25,n:'추석'},{m:9,d:26,n:'추석 연휴'},{m:10,d:3,n:'개천절'},{m:10,d:9,n:'한글날'},{m:12,d:25,n:'성탄절'}],
+  vn:[{m:1,d:1,n:"New Year's Day"},{m:1,d:28,n:'Tết'},{m:1,d:29,n:'Tết'},{m:1,d:30,n:'Tết'},{m:2,d:1,n:'Tết'},{m:2,d:2,n:'Tết'},{m:2,d:3,n:'Tết'},{m:4,d:16,n:'Hung Kings Festival'},{m:4,d:30,n:'Reunification Day'},{m:5,d:1,n:'Labour Day'},{m:9,d:2,n:'National Day'}],
+  sa:[{m:2,d:22,n:'Founding Day'},{m:9,d:23,n:'National Day'},{m:3,d:30,n:'Eid al-Fitr'},{m:3,d:31,n:'Eid al-Fitr'},{m:4,d:1,n:'Eid al-Fitr'},{m:4,d:2,n:'Eid al-Fitr'},{m:6,d:6,n:'Eid al-Adha'},{m:6,d:7,n:'Eid al-Adha'},{m:6,d:8,n:'Eid al-Adha'},{m:6,d:9,n:'Eid al-Adha'}],
+  eg:[{m:1,d:7,n:'Coptic Christmas'},{m:1,d:25,n:'Revolution Day'},{m:3,d:30,n:'Eid al-Fitr'},{m:3,d:31,n:'Eid al-Fitr'},{m:4,d:1,n:'Eid al-Fitr'},{m:4,d:2,n:'Eid al-Fitr'},{m:4,d:25,n:'Sinai Liberation Day'},{m:5,d:1,n:'Labour Day'},{m:6,d:6,n:'Eid al-Adha'},{m:6,d:7,n:'Eid al-Adha'},{m:6,d:8,n:'Eid al-Adha'},{m:6,d:9,n:'Eid al-Adha'},{m:6,d:30,n:'June 30 Revolution'},{m:7,d:23,n:'Revolution Day'},{m:10,d:6,n:'Armed Forces Day'}],
+  co:[{m:1,d:1,n:'Año Nuevo'},{m:1,d:12,n:'Reyes Magos'},{m:3,d:23,n:'San José'},{m:4,d:2,n:'Jueves Santo'},{m:4,d:3,n:'Viernes Santo'},{m:5,d:1,n:'Día del Trabajo'},{m:5,d:18,n:'Ascensión'},{m:6,d:8,n:'Corpus Christi'},{m:6,d:15,n:'Sagrado Corazón'},{m:6,d:29,n:'San Pedro y San Pablo'},{m:7,d:20,n:'Independencia'},{m:8,d:7,n:'Batalla de Boyacá'},{m:8,d:17,n:'Asunción'},{m:10,d:12,n:'Día de la Raza'},{m:11,d:2,n:'Todos los Santos'},{m:11,d:16,n:'Indep. de Cartagena'},{m:12,d:8,n:'Inmaculada Concepción'},{m:12,d:25,n:'Navidad'}],
+  se:[{m:1,d:1,n:'Nyårsdagen'},{m:1,d:6,n:'Trettondag Jul'},{m:4,d:3,n:'Långfredag'},{m:4,d:5,n:'Påskdagen'},{m:4,d:6,n:'Annandag Påsk'},{m:5,d:1,n:'Första Maj'},{m:5,d:14,n:'Kristi Himmelsfärd'},{m:5,d:25,n:'Pingstdagen'},{m:6,d:6,n:'Sveriges Nationaldag'},{m:6,d:20,n:'Midsommarafton'},{m:6,d:21,n:'Midsommardagen'},{m:11,d:7,n:'Alla Helgons Dag'},{m:12,d:25,n:'Juldagen'},{m:12,d:26,n:'Annandag Jul'}],
+  au:[{m:1,d:1,n:"New Year's Day"},{m:1,d:26,n:'Australia Day'},{m:4,d:3,n:'Good Friday'},{m:4,d:4,n:'Easter Saturday'},{m:4,d:5,n:'Easter Sunday'},{m:4,d:6,n:'Easter Monday'},{m:4,d:25,n:'ANZAC Day'},{m:6,d:9,n:"King's Birthday"},{m:8,d:4,n:'Bank Holiday'},{m:10,d:6,n:'Labour Day'},{m:12,d:25,n:'Christmas Day'},{m:12,d:26,n:'Boxing Day'}],
+};
+
+function localDate(tz) {
+  const s = new Date().toLocaleString('en-US',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit'});
+  const [mm,dd,yyyy]=s.split('/'); return new Date(+yyyy,+mm-1,+dd);
+}
+function holiday(id,tz) {
+  const d=localDate(tz),m=d.getMonth()+1,day=d.getDate();
+  return (H[id]||[]).find(h=>h.m===m&&h.d===day)||null;
+}
+function timeParts(tz) {
+  const s=new Date().toLocaleString('en-US',{timeZone:tz,hour:'numeric',minute:'2-digit',hour12:true});
+  const r=s.match(/^(\d+:\d+)\s+(AM|PM)$/i);
+  return r?{hm:r[1],ap:r[2].toUpperCase()}:{hm:s,ap:''};
+}
+function dateStr(tz) {
+  return new Date().toLocaleDateString('ko-KR',{timeZone:tz,month:'short',day:'numeric',weekday:'short'});
+}
+function offsetMin(tz) {
+  const now=new Date();
+  const u=new Date(now.toLocaleString('en-US',{timeZone:'UTC'}));
+  const l=new Date(now.toLocaleString('en-US',{timeZone:tz}));
+  return (l-u)/60000;
+}
+
+let order=C.map((_,i)=>i);
+
+function populateSel() {
+  ['fromTz','toTz'].forEach(id=>{
+    const s=document.getElementById(id);
+    C.forEach(c=>{const o=new Option(c.flag+' '+c.name,c.tz);s.add(o);});
+  });
+  document.getElementById('toTz').selectedIndex=1;
+}
+
+function doConvert() {
+  const val=document.getElementById('fromTime').value; if(!val)return;
+  const [h,m]=val.split(':').map(Number);
+  const ft=document.getElementById('fromTz').value,tt=document.getElementById('toTz').value;
+  const now=new Date(); now.setHours(h,m,0,0);
+  const d=offsetMin(tt)-offsetMin(ft);
+  const t=new Date(now.getTime()+d*60000);
+  const hh=t.getHours(),mm=String(t.getMinutes()).padStart(2,'0');
+  const ap=hh>=12?'PM':'AM',h12=hh%12||12;
+  const name=C.find(c=>c.tz===tt)?.name||tt;
+  document.getElementById('convResult').textContent=h12+':'+mm+' '+ap+'  ·  '+name;
+}
+
+function buildCards() {
+  const list=document.getElementById('clockList'); list.innerHTML='';
+  order.forEach((idx,pos)=>{
+    const c=C[idx];
+    const div=document.createElement('div');
+    div.className='clock-card'+(c.korea?' is-korea':'');
+    div.dataset.idx=idx; div.dataset.pos=pos; div.draggable=true;
+    div.style.animationDelay=(pos*0.04)+'s';
+    div.innerHTML=`
+      <div class="card-main">
+        <div class="handle"><span></span><span></span><span></span></div>
+        <div class="flag-box">${c.flag}</div>
+        <div class="card-info">
+          <div class="cname">${c.name}<span class="hol-pill" id="pill-${idx}"></span></div>
+          <div class="ctz">${c.tzl}</div>
+        </div>
+        <div class="card-time">
+          <div class="time-main">
+            <span class="tdig" id="td-${idx}">--:--</span>
+            <span class="tampm" id="ta-${idx}"></span>
+          </div>
+          <div class="tdate" id="tdt-${idx}"></div>
+        </div>
+      </div>
+      <div class="hol-footer" id="hf-${idx}"></div>`;
+    list.appendChild(div);
+  });
+  attachDrag();
+}
+
+function updateCards() {
+  order.forEach(idx=>{
+    const c=C[idx];
+    const p=timeParts(c.tz);
+    const el=document.getElementById('td-'+idx); if(!el)return;
+    el.textContent=p.hm;
+    document.getElementById('ta-'+idx).textContent=p.ap;
+    document.getElementById('tdt-'+idx).textContent=dateStr(c.tz);
+    const hol=holiday(c.id,c.tz);
+    const card=document.querySelector('[data-idx="'+idx+'"]'); if(!card)return;
+    if(hol){
+      card.classList.add('is-holiday');
+      document.getElementById('pill-'+idx).textContent=hol.n;
+      document.getElementById('hf-'+idx).textContent='🗓 오늘은 '+hol.n+' 공휴일입니다';
+    } else {
+      card.classList.remove('is-holiday');
+      document.getElementById('pill-'+idx).textContent='';
+      document.getElementById('hf-'+idx).textContent='';
+    }
+  });
+}
+
+function updateToday() {
+  document.getElementById('todayStr').textContent=
+    new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+}
+
+let dragSrc=null;
+function attachDrag() {
+  document.querySelectorAll('.clock-card').forEach(el=>{
+    el.addEventListener('dragstart',e=>{dragSrc=el;el.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
+    el.addEventListener('dragend',()=>{el.classList.remove('dragging');document.querySelectorAll('.clock-card').forEach(i=>i.classList.remove('drag-over'));});
+    el.addEventListener('dragover',e=>{e.preventDefault();if(el!==dragSrc){document.querySelectorAll('.clock-card').forEach(i=>i.classList.remove('drag-over'));el.classList.add('drag-over');}});
+    el.addEventListener('drop',e=>{
+      e.preventDefault(); if(el===dragSrc)return;
+      const sp=parseInt(dragSrc.dataset.pos),dp=parseInt(el.dataset.pos);
+      const n=[...order];const[rm]=n.splice(sp,1);n.splice(dp,0,rm);order=n;
+      buildCards();updateCards();
+    });
+  });
+}
+
+populateSel(); buildCards(); updateCards(); updateToday();
+setInterval(updateCards,30000);
+document.getElementById('fromTime').addEventListener('input',doConvert);
+document.getElementById('fromTz').addEventListener('change',doConvert);
+document.getElementById('toTz').addEventListener('change',doConvert);
+doConvert();
+</script>
+</body>
+</html>
