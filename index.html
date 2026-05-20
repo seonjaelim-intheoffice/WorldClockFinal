@@ -81,70 +81,108 @@ h1 span { color: var(--blue); }
   margin-bottom: 32px;
 }
 
-.conv-row {
+/* ── Converter layout ── */
+/* Row 1: [time-combo] [AM/PM] [from-tz]   Row 2: [→] [to-tz] [result] */
+.conv-rows { display: flex; flex-direction: column; gap: 8px; }
+
+.conv-line {
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.conv-block {
+/* Shared native select base */
+.csel {
+  font-family: var(--sans);
+  font-size: 13px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  outline: none;
+  padding: 10px 28px 10px 11px;
+  color: var(--text-sec);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239BADC4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 9px center;
+  transition: border-color 0.15s;
+  min-width: 0;
+  width: 100%;
+}
+.csel:focus { border-color: var(--blue); }
+
+/* Time combobox: input + datalist arrow in one pill */
+.time-combo {
   display: flex;
   align-items: center;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--r-sm);
   overflow: hidden;
-  flex: 1;
-  min-width: 200px;
+  flex-shrink: 0;
+  transition: border-color 0.15s;
 }
+.time-combo:focus-within { border-color: var(--blue); }
 
-.conv-block input[type="time"] {
+.time-combo input[list] {
   font-family: var(--mono);
   font-size: 15px;
+  font-weight: 500;
   background: transparent;
   border: none;
-  border-right: 1px solid var(--border);
   outline: none;
-  padding: 10px 12px;
+  padding: 10px 10px;
   color: var(--text);
-  width: 108px;
-  flex-shrink: 0;
+  width: 82px;
+  letter-spacing: 0.02em;
 }
+.time-combo input[list]::placeholder { color: var(--text-dim); font-weight: 400; font-size: 13px; }
 
-.conv-block select {
+/* AM/PM toggle select */
+.ampm-sel {
   font-family: var(--sans);
-  font-size: 13px;
-  background: transparent;
-  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
   outline: none;
-  padding: 10px 32px 10px 12px;
-  color: var(--text-sec);
+  padding: 10px 24px 10px 10px;
+  color: var(--blue);
   cursor: pointer;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239BADC4'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%236B8CC4'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 10px center;
-  flex: 1;
+  background-position: right 7px center;
+  flex-shrink: 0;
+  transition: border-color 0.15s;
+  letter-spacing: 0.04em;
 }
+.ampm-sel:focus { border-color: var(--blue); }
 
 .conv-arrow {
-  font-size: 16px;
+  font-size: 15px;
   color: var(--text-dim);
   flex-shrink: 0;
+  user-select: none;
 }
 
 .conv-result {
   background: var(--blue-light);
   border: 1px solid var(--blue-mid);
   border-radius: var(--r-sm);
-  padding: 10px 16px;
+  padding: 10px 14px;
   font-family: var(--mono);
   font-size: 14px;
   color: var(--blue-dark);
   font-weight: 500;
+  letter-spacing: 0.02em;
+  flex: 1;
+  min-width: 0;
   white-space: nowrap;
-  min-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Clocks header */
@@ -310,9 +348,9 @@ h1 span { color: var(--blue); }
 }
 .clock-card.is-holiday .hol-footer { display: block; }
 
-@media (max-width: 500px) {
-  .conv-row { flex-direction: column; align-items: stretch; }
-  .conv-result { min-width: auto; }
+@media (max-width: 560px) {
+  .conv-line { flex-wrap: wrap; }
+  .csel { min-width: 120px; }
   .hdr { flex-direction: column; align-items: flex-start; gap: 6px; }
   body { padding: 28px 16px 60px; }
 }
@@ -327,16 +365,25 @@ h1 span { color: var(--blue); }
 
 <div class="stag">시간대 변환</div>
 <div class="converter">
-  <div class="conv-row">
-    <div class="conv-block">
-      <input type="time" id="fromTime" value="09:00">
-      <select id="fromTz"></select>
+  <div class="conv-rows">
+    <!-- Line 1: time input + AM/PM + from timezone -->
+    <div class="conv-line">
+      <div class="time-combo">
+        <input list="timeList" id="fromTime" placeholder="12:00" autocomplete="off">
+        <datalist id="timeList"></datalist>
+      </div>
+      <select id="ampmSel" class="ampm-sel">
+        <option value="AM">AM</option>
+        <option value="PM">PM</option>
+      </select>
+      <select id="fromTz" class="csel" style="flex:1"></select>
     </div>
-    <span class="conv-arrow">→</span>
-    <div class="conv-block" style="max-width:200px; flex:0 1 200px;">
-      <select id="toTz" style="width:100%;"></select>
+    <!-- Line 2: arrow + to timezone + result -->
+    <div class="conv-line">
+      <span class="conv-arrow">→</span>
+      <select id="toTz" class="csel" style="flex:1"></select>
+      <div class="conv-result" id="convResult">—</div>
     </div>
-    <div class="conv-result" id="convResult">—</div>
   </div>
 </div>
 
@@ -393,24 +440,67 @@ function offsetMin(tz) {
 let order=C.map((_,i)=>i);
 
 function populateSel() {
+  // Country selects
   ['fromTz','toTz'].forEach(id=>{
     const s=document.getElementById(id);
     C.forEach(c=>{const o=new Option(c.flag+' '+c.name,c.tz);s.add(o);});
   });
   document.getElementById('toTz').selectedIndex=1;
+
+  // Time datalist: every 30-min slot in 12h format
+  const dl=document.getElementById('timeList');
+  for(let h=1;h<=12;h++){
+    ['00','30'].forEach(m=>{
+      const o=document.createElement('option');
+      o.value=h+':'+m;
+      dl.appendChild(o);
+    });
+  }
+
+  // Default AM/PM to current hour
+  const nowH=new Date().getHours();
+  document.getElementById('ampmSel').value = nowH>=12?'PM':'AM';
+  // Default time input to current time (12h)
+  const h12 = nowH%12||12;
+  const mm = String(new Date().getMinutes()).padStart(2,'0');
+  document.getElementById('fromTime').value = h12+':'+mm;
 }
 
 function doConvert() {
-  const val=document.getElementById('fromTime').value; if(!val)return;
-  const [h,m]=val.split(':').map(Number);
-  const ft=document.getElementById('fromTz').value,tt=document.getElementById('toTz').value;
-  const now=new Date(); now.setHours(h,m,0,0);
-  const d=offsetMin(tt)-offsetMin(ft);
-  const t=new Date(now.getTime()+d*60000);
-  const hh=t.getHours(),mm=String(t.getMinutes()).padStart(2,'0');
-  const ap=hh>=12?'PM':'AM',h12=hh%12||12;
+  const raw = document.getElementById('fromTime').value.trim();
+  const ampm = document.getElementById('ampmSel').value; // "AM" or "PM"
+  const result = document.getElementById('convResult');
+
+  if (!raw) { result.textContent = '—'; return; }
+
+  // Parse "H", "H:MM", "HMM", "HHMM"
+  let h, m;
+  const colonM = raw.match(/^(\d{1,2}):(\d{2})$/);
+  const plainM = raw.match(/^(\d{1,4})$/);
+  if (colonM) {
+    h=parseInt(colonM[1]); m=parseInt(colonM[2]);
+  } else if (plainM) {
+    const n=raw.padStart(4,'0');
+    h=parseInt(n.slice(0,2)); m=parseInt(n.slice(2));
+  } else {
+    result.textContent='형식 오류 (예: 9:30)'; return;
+  }
+
+  if (h<1||h>12||m>59) { result.textContent='유효하지 않은 시간'; return; }
+
+  // Convert 12h → 24h
+  let h24 = h % 12; // 12 AM → 0, 12 PM → 12
+  if (ampm==='PM') h24 += 12;
+
+  const ft=document.getElementById('fromTz').value;
+  const tt=document.getElementById('toTz').value;
+  const now=new Date(); now.setHours(h24,m,0,0);
+  const diff=offsetMin(tt)-offsetMin(ft);
+  const t=new Date(now.getTime()+diff*60000);
+  const rh=t.getHours(), rm2=String(t.getMinutes()).padStart(2,'0');
+  const rap=rh>=12?'PM':'AM', rh12=rh%12||12;
   const name=C.find(c=>c.tz===tt)?.name||tt;
-  document.getElementById('convResult').textContent=h12+':'+mm+' '+ap+'  ·  '+name;
+  result.textContent=rh12+':'+rm2+' '+rap+'  ·  '+name;
 }
 
 function buildCards() {
@@ -487,9 +577,10 @@ function attachDrag() {
 
 populateSel(); buildCards(); updateCards(); updateToday();
 setInterval(updateCards,30000);
-document.getElementById('fromTime').addEventListener('input',doConvert);
-document.getElementById('fromTz').addEventListener('change',doConvert);
-document.getElementById('toTz').addEventListener('change',doConvert);
+document.getElementById('fromTime').addEventListener('input', doConvert);
+document.getElementById('ampmSel').addEventListener('change', doConvert);
+document.getElementById('fromTz').addEventListener('change', doConvert);
+document.getElementById('toTz').addEventListener('change', doConvert);
 doConvert();
 </script>
 </body>
