@@ -5,33 +5,33 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>World Clock</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+/* ── Reset & Variables ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
-  --bg:          #F0F4FA;
-  --white:       #FFFFFF;
-  --border:      #DDE5F0;
-  --border-md:   #C5D2E8;
-  --blue:        #2563EB;
-  --blue-hover:  #1D4ED8;
-  --blue-light:  #EEF3FF;
-  --blue-mid:    #BFCFF9;
-  --blue-dark:   #1D4ED8;
-  --blue-muted:  #6B8CC4;
-  --text:        #0D1B2E;
-  --text-sec:    #4A607E;
-  --text-dim:    #94A8C0;
-  --red:         #DC2626;
-  --red-light:   #FFF2F2;
-  --red-border:  #FBCACA;
-  --sans:        'Plus Jakarta Sans', sans-serif;
-  --mono:        'JetBrains Mono', monospace;
-  --r:           16px;
-  --r-sm:        10px;
-  --shadow:      0 2px 16px rgba(37,99,235,0.07);
-  --shadow-md:   0 4px 24px rgba(37,99,235,0.11);
+  --bg:         #F0F4FA;
+  --white:      #FFFFFF;
+  --border:     #DDE5F0;
+  --border-md:  #C5D2E8;
+  --blue:       #2563EB;
+  --blue-h:     #1D4ED8;
+  --blue-lt:    #EEF3FF;
+  --blue-mid:   #BFCFF9;
+  --blue-dk:    #1D4ED8;
+  --blue-mu:    #6B8CC4;
+  --text:       #0D1B2E;
+  --text-sec:   #4A607E;
+  --text-dim:   #94A8C0;
+  --red:        #DC2626;
+  --red-lt:     #FFF2F2;
+  --red-bd:     #FBCACA;
+  --sans:       'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono:       'JetBrains Mono', 'Courier New', monospace;
+  --r:          16px;
+  --r-sm:       10px;
+  --shadow:     0 2px 16px rgba(37,99,235,0.07);
+  --shadow-md:  0 4px 24px rgba(37,99,235,0.11);
 }
 
 body {
@@ -46,369 +46,193 @@ body {
 
 /* ── Header ── */
 .hdr { margin-bottom: 40px; }
-.hdr-top { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 4px; }
-h1 { font-size: 30px; font-weight: 700; letter-spacing: -0.04em; color: var(--text); }
+h1 { font-size: 30px; font-weight: 700; letter-spacing: -0.04em; margin-bottom: 4px; }
 h1 span { color: var(--blue); }
 .today-str { font-size: 13px; color: var(--text-dim); }
+.year-note { font-size: 11px; color: var(--text-dim); margin-top: 2px; opacity: 0.7; }
 
 /* ── Section label ── */
 .slabel {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.10em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  margin-bottom: 12px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
+  text-transform: uppercase; color: var(--text-dim); margin-bottom: 12px;
 }
 
-/* ── Converter card ── */
+/* ── Converter ── */
 .converter {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: 28px;
-  margin-bottom: 36px;
-  box-shadow: var(--shadow);
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 28px;
+  margin-bottom: 36px; box-shadow: var(--shadow);
 }
-
 .conv-grid {
   display: grid;
   grid-template-columns: auto auto auto 1fr auto 1fr;
-  gap: 10px;
-  align-items: center;
-  margin-bottom: 14px;
+  gap: 10px; align-items: center; margin-bottom: 14px;
 }
-
-/* date picker */
 .date-input {
-  font-family: var(--sans);
-  font-size: 13px;
-  font-weight: 500;
-  background: var(--bg);
-  border: 1.5px solid var(--border);
-  border-radius: var(--r-sm);
-  outline: none;
-  padding: 12px 12px;
-  color: var(--text-sec);
-  cursor: pointer;
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: var(--r-sm); outline: none; padding: 12px;
+  color: var(--text-sec); cursor: pointer; color-scheme: light;
   transition: border-color 0.15s;
-  flex-shrink: 0;
-  color-scheme: light;
 }
 .date-input:focus { border-color: var(--blue); }
-
-/* time input */
 .time-combo {
-  display: flex;
-  align-items: center;
-  background: var(--bg);
-  border: 1.5px solid var(--border);
-  border-radius: var(--r-sm);
-  overflow: hidden;
-  transition: border-color 0.15s;
+  display: flex; align-items: center; background: var(--bg);
+  border: 1.5px solid var(--border); border-radius: var(--r-sm);
+  overflow: hidden; transition: border-color 0.15s;
 }
 .time-combo:focus-within { border-color: var(--blue); }
 .time-combo input {
-  font-family: var(--mono);
-  font-size: 18px;
-  font-weight: 500;
-  background: transparent;
-  border: none;
-  outline: none;
-  padding: 12px 14px;
-  color: var(--text);
-  width: 95px;
-  letter-spacing: 0.02em;
+  font-family: var(--mono); font-size: 18px; font-weight: 500;
+  background: transparent; border: none; outline: none;
+  padding: 12px 14px; color: var(--text); width: 95px;
 }
 .time-combo input::placeholder { color: var(--text-dim); font-size: 15px; font-weight: 400; }
-
-/* AM/PM select */
 .ampm-sel {
-  font-family: var(--sans);
-  font-size: 13px;
-  font-weight: 700;
-  background: var(--bg);
-  border: 1.5px solid var(--border);
-  border-radius: var(--r-sm);
-  outline: none;
-  padding: 12px 28px 12px 13px;
-  color: var(--blue);
-  cursor: pointer;
+  font-family: var(--sans); font-size: 13px; font-weight: 700;
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: var(--r-sm); outline: none;
+  padding: 12px 28px 12px 13px; color: var(--blue); cursor: pointer;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236B8CC4'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 9px center;
-  transition: border-color 0.15s;
-  letter-spacing: 0.05em;
-  flex-shrink: 0;
+  background-repeat: no-repeat; background-position: right 9px center;
+  transition: border-color 0.15s; letter-spacing: 0.05em;
 }
 .ampm-sel:focus { border-color: var(--blue); }
-
-/* country select */
-.tz-sel-wrap { position: relative; }
+.tz-sel-wrap { position: relative; min-width: 0; }
 .tz-sel {
-  font-family: var(--sans);
-  font-size: 14px;
-  font-weight: 500;
-  background: var(--bg);
-  border: 1.5px solid var(--border);
-  border-radius: var(--r-sm);
-  outline: none;
-  padding: 12px 34px 12px 13px;
-  color: var(--text-sec);
-  cursor: pointer;
-  appearance: none;
+  font-family: var(--sans); font-size: 14px; font-weight: 500;
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: var(--r-sm); outline: none;
+  padding: 12px 34px 12px 13px; color: var(--text-sec);
+  cursor: pointer; appearance: none; width: 100%;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2394A8C0'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
+  background-repeat: no-repeat; background-position: right 10px center;
   transition: border-color 0.15s;
-  width: 100%;
 }
 .tz-sel:focus { border-color: var(--blue); }
-
-.conv-arrow {
-  font-size: 18px;
-  color: var(--text-dim);
-  text-align: center;
-  user-select: none;
-  flex-shrink: 0;
-}
-
-/* result block */
+.conv-arrow { font-size: 18px; color: var(--text-dim); text-align: center; user-select: none; }
 .conv-result-wrap {
-  background: var(--blue-light);
-  border: 1.5px solid var(--blue-mid);
-  border-radius: var(--r-sm);
-  padding: 16px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  background: var(--blue-lt); border: 1.5px solid var(--blue-mid);
+  border-radius: var(--r-sm); padding: 16px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
 }
 .result-time {
-  font-family: var(--mono);
-  font-size: 28px;
-  font-weight: 600;
-  color: var(--blue-dark);
-  letter-spacing: -0.02em;
+  font-family: var(--mono); font-size: 28px; font-weight: 600;
+  color: var(--blue-dk); letter-spacing: -0.02em;
 }
-.result-meta {
-  text-align: right;
-}
-.result-country {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--blue);
-  margin-bottom: 3px;
-}
-.result-date {
-  font-size: 12px;
-  color: var(--blue-muted);
-}
+.result-meta { text-align: right; }
+.result-country { font-size: 14px; font-weight: 600; color: var(--blue); margin-bottom: 3px; }
+.result-date { font-size: 12px; color: var(--blue-mu); }
 
-/* ── Add country section ── */
-.add-section {
-  margin-bottom: 36px;
-}
-.add-row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
+/* ── Add country ── */
+.add-section { margin-bottom: 36px; }
+.add-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .add-input {
-  font-family: var(--sans);
-  font-size: 14px;
-  background: var(--white);
-  border: 1.5px solid var(--border);
-  border-radius: var(--r-sm);
-  outline: none;
-  padding: 11px 14px;
-  color: var(--text);
-  transition: border-color 0.15s;
-  flex: 1;
+  font-family: var(--sans); font-size: 14px; background: var(--white);
+  border: 1.5px solid var(--border); border-radius: var(--r-sm);
+  outline: none; padding: 11px 14px; color: var(--text);
+  transition: border-color 0.15s; flex: 1;
 }
 .add-input:focus { border-color: var(--blue); }
 .add-input::placeholder { color: var(--text-dim); }
-.add-flag-input {
-  width: 64px;
-  text-align: center;
-  font-size: 20px;
-  flex-shrink: 0;
-}
+.add-flag-input { width: 64px; text-align: center; font-size: 20px; flex: 0 0 64px; }
 .add-tz-sel {
-  font-family: var(--sans);
-  font-size: 13px;
-  background: var(--white);
-  border: 1.5px solid var(--border);
-  border-radius: var(--r-sm);
-  outline: none;
-  padding: 11px 30px 11px 13px;
-  color: var(--text-sec);
-  cursor: pointer;
-  appearance: none;
+  font-family: var(--sans); font-size: 13px; background: var(--white);
+  border: 1.5px solid var(--border); border-radius: var(--r-sm);
+  outline: none; padding: 11px 30px 11px 13px; color: var(--text-sec);
+  cursor: pointer; appearance: none; flex: 2; min-width: 140px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2394A8C0'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
+  background-repeat: no-repeat; background-position: right 10px center;
   transition: border-color 0.15s;
-  flex: 1;
 }
 .add-tz-sel:focus { border-color: var(--blue); }
 .add-btn {
-  font-family: var(--sans);
-  font-size: 14px;
-  font-weight: 600;
-  background: var(--blue);
-  color: #fff;
-  border: none;
-  border-radius: var(--r-sm);
-  padding: 11px 20px;
-  cursor: pointer;
-  transition: background 0.15s;
-  white-space: nowrap;
-  flex-shrink: 0;
+  font-family: var(--sans); font-size: 14px; font-weight: 600;
+  background: var(--blue); color: #fff; border: none;
+  border-radius: var(--r-sm); padding: 11px 20px;
+  cursor: pointer; transition: background 0.15s; white-space: nowrap; flex-shrink: 0;
 }
-.add-btn:hover { background: var(--blue-hover); }
+.add-btn:hover { background: var(--blue-h); }
 
 /* ── Clock gallery ── */
 .clocks-hdr {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 14px;
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 14px;
 }
 .drag-tip { font-size: 12px; color: var(--text-dim); }
-
 #clockList {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
   gap: 12px;
 }
 
+/* ── Clock card ── */
 .clock-card {
-  background: var(--white);
-  border: 1.5px solid var(--border);
-  border-radius: var(--r);
-  overflow: hidden;
-  cursor: grab;
+  background: var(--white); border: 1.5px solid var(--border);
+  border-radius: var(--r); overflow: hidden; cursor: grab;
   transition: border-color 0.18s, box-shadow 0.18s, transform 0.18s;
-  box-shadow: var(--shadow);
-  display: flex;
-  flex-direction: column;
-  position: relative;
+  box-shadow: var(--shadow); display: flex; flex-direction: column;
+  position: relative; user-select: none;
+  -webkit-user-select: none;
 }
-.clock-card:hover {
-  border-color: var(--border-md);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
-}
-.clock-card:active { cursor: grabbing; transform: scale(0.98); }
-.clock-card.dragging { opacity: 0.3; transform: scale(0.96); }
+.clock-card:hover { border-color: var(--border-md); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.clock-card.dragging { opacity: 0.3; transform: scale(0.96); cursor: grabbing; }
 .clock-card.drag-over { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.14); transform: scale(1.02); }
-
-/* top accent bar */
-.clock-card::before {
-  content: '';
-  display: block;
-  height: 3px;
-  background: var(--border);
-  transition: background 0.2s;
-}
+.clock-card::before { content: ''; display: block; height: 3px; background: var(--border); transition: background 0.2s; }
 .clock-card.is-korea:not(.is-holiday)::before { background: var(--blue); }
 .clock-card.is-holiday::before { background: var(--red); }
-.clock-card.is-holiday { background: var(--red-light); border-color: var(--red-border); }
+.clock-card.is-holiday { background: var(--red-lt); border-color: var(--red-bd); }
 .clock-card.is-holiday:hover { border-color: #F87171; }
 
-/* card body */
-.card-main {
-  padding: 18px 18px 14px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-/* top row: flag + name + remove */
-.card-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 14px;
-}
+.card-main { padding: 18px 18px 14px; flex: 1; display: flex; flex-direction: column; }
+.card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
 .card-top-left { display: flex; align-items: center; gap: 10px; }
 .flag-box { font-size: 28px; line-height: 1; }
-.card-info {}
-.cname {
-  font-size: 14px; font-weight: 700; color: var(--text);
-  letter-spacing: -0.01em; margin-bottom: 2px;
-}
+.cname { font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -0.01em; margin-bottom: 2px; }
 .ctz { font-size: 11px; color: var(--text-dim); }
-
-/* drag handle (top-right corner) */
-.handle {
-  display: flex; flex-direction: column; gap: 3px;
-  opacity: 0; transition: opacity 0.15s; flex-shrink: 0;
-  padding: 2px;
-}
+.handle { display: flex; flex-direction: column; gap: 3px; opacity: 0; transition: opacity 0.15s; padding: 2px; touch-action: none; }
 .clock-card:hover .handle { opacity: 0.35; }
 .handle span { display: block; width: 14px; height: 1.5px; background: var(--text); border-radius: 2px; }
-
-/* remove btn */
 .remove-btn {
   position: absolute; top: 10px; right: 10px;
   background: var(--bg); border: 1px solid var(--border); cursor: pointer;
   color: var(--text-dim); font-size: 14px; line-height: 1;
   width: 22px; height: 22px; border-radius: 50%;
   display: none; align-items: center; justify-content: center;
-  transition: color 0.15s, background 0.15s, border-color 0.15s;
-  z-index: 2;
+  transition: color 0.15s, background 0.15s, border-color 0.15s; z-index: 2;
 }
 .clock-card:hover .remove-btn { display: flex; }
-.remove-btn:hover { color: var(--red); background: var(--red-light); border-color: var(--red-border); }
-
-/* time block */
+.remove-btn:hover { color: var(--red); background: var(--red-lt); border-color: var(--red-bd); }
 .card-time { margin-top: auto; }
 .time-main { display: flex; align-items: baseline; gap: 5px; margin-bottom: 4px; }
-.tdig {
-  font-family: var(--mono); font-size: 30px; font-weight: 600;
-  color: var(--text); letter-spacing: -0.03em; line-height: 1;
-}
-.tampm {
-  font-size: 12px; font-weight: 700; color: var(--blue-muted);
-  letter-spacing: 0.06em; padding-bottom: 2px;
-}
+.tdig { font-family: var(--mono); font-size: 30px; font-weight: 600; color: var(--text); letter-spacing: -0.03em; line-height: 1; }
+.tampm { font-size: 12px; font-weight: 700; color: var(--blue-mu); letter-spacing: 0.06em; padding-bottom: 2px; }
 .tdate { font-size: 11px; color: var(--text-dim); }
-
-/* holiday pill */
 .hol-pill {
-  display: none; font-size: 9px; font-weight: 700;
-  letter-spacing: 0.05em; text-transform: uppercase;
-  background: var(--red); color: #fff;
-  padding: 2px 7px; border-radius: 20px;
-  margin-top: 6px;
+  display: none; font-size: 9px; font-weight: 700; letter-spacing: 0.05em;
+  text-transform: uppercase; background: var(--red); color: #fff;
+  padding: 2px 7px; border-radius: 20px; margin-top: 6px;
 }
 .clock-card.is-holiday .hol-pill { display: inline-block; }
-
-/* holiday footer */
 .hol-footer {
-  display: none;
-  background: #FEE2E2; border-top: 1px solid var(--red-border);
-  padding: 7px 14px;
-  font-size: 11px; font-weight: 500; color: var(--red);
-  text-align: center;
+  display: none; background: #FEE2E2; border-top: 1px solid var(--red-bd);
+  padding: 7px 14px; font-size: 11px; font-weight: 500; color: var(--red); text-align: center;
 }
 .clock-card.is-holiday .hol-footer { display: block; }
 
 @keyframes cardIn {
-  from { opacity:0; transform: translateY(8px); }
-  to   { opacity:1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ── Responsive ── */
 @media (max-width: 640px) {
   body { padding: 32px 16px 80px; }
   .conv-grid { grid-template-columns: 1fr 1fr; row-gap: 10px; }
   .conv-grid .date-input { grid-column: 1 / 3; }
   .conv-grid .conv-arrow { display: none; }
   .conv-grid .tz-sel-wrap:last-of-type { grid-column: 1 / 3; }
-  .add-row { flex-wrap: wrap; }
   h1 { font-size: 24px; }
   #clockList { grid-template-columns: repeat(2, 1fr); }
 }
@@ -420,34 +244,28 @@ h1 span { color: var(--blue); }
 <body>
 
 <header class="hdr">
-  <div class="hdr-top">
-    <h1>World <span>Clock</span></h1>
-  </div>
+  <h1>World <span>Clock</span></h1>
   <div class="today-str" id="todayStr"></div>
+  <div class="year-note" id="yearNote"></div>
 </header>
 
-<!-- ── Converter ── -->
 <div class="slabel">시간대 변환</div>
 <div class="converter">
   <div class="conv-grid">
     <input type="date" id="fromDate" class="date-input">
     <div class="time-combo">
-      <input list="timeList" id="fromTime" placeholder="12:00" autocomplete="off">
+      <input list="timeList" id="fromTime" placeholder="12:00" autocomplete="off" maxlength="5">
       <datalist id="timeList"></datalist>
     </div>
     <select id="ampmSel" class="ampm-sel">
       <option value="AM">AM</option>
       <option value="PM">PM</option>
     </select>
-    <div class="tz-sel-wrap">
-      <select id="fromTz" class="tz-sel"></select>
-    </div>
+    <div class="tz-sel-wrap"><select id="fromTz" class="tz-sel"></select></div>
     <span class="conv-arrow">→</span>
-    <div class="tz-sel-wrap">
-      <select id="toTz" class="tz-sel"></select>
-    </div>
+    <div class="tz-sel-wrap"><select id="toTz" class="tz-sel"></select></div>
   </div>
-  <div class="conv-result-wrap" id="convResultWrap">
+  <div class="conv-result-wrap">
     <div class="result-time" id="resTime">—</div>
     <div class="result-meta">
       <div class="result-country" id="resCountry"></div>
@@ -456,44 +274,55 @@ h1 span { color: var(--blue); }
   </div>
 </div>
 
-<!-- ── Add country ── -->
 <div class="add-section">
   <div class="slabel">국가 추가</div>
   <div class="add-row">
     <input type="text" class="add-input add-flag-input" id="addFlag" placeholder="🌍" maxlength="2">
-    <input type="text" class="add-input" id="addName" placeholder="국가명 (예: 일본)" style="flex:1.2">
+    <input type="text" class="add-input" id="addName" placeholder="국가명 (예: 일본)" style="flex:1.2" maxlength="30">
     <select id="addTz" class="add-tz-sel"></select>
-    <button class="add-btn" onclick="addCountry()">+ 추가</button>
+    <button class="add-btn" id="addBtn">+ 추가</button>
   </div>
 </div>
 
-<!-- ── Clocks ── -->
 <div class="clocks-hdr">
   <div class="slabel" style="margin-bottom:0">현지 시각</div>
-  <div class="drag-tip">드래그로 순서 변경</div>
+  <div class="drag-tip" id="dragTip">드래그로 순서 변경</div>
 </div>
 <div id="clockList"></div>
 
 <script>
-// ── All IANA timezones for the add-dropdown ──
+'use strict';
+
+// ── XSS-safe text setter ──
+function setText(el, str) {
+  if (el) el.textContent = str;
+}
+function safeText(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+    .replace(/'/g,'&#x27;');
+}
+
+// ── Timezone list for add-dropdown ──
 const ALL_TZ = [
-  ["Asia/Seoul","한국 (UTC+9)"],["Asia/Tokyo","일본 (UTC+9)"],
-  ["Asia/Ho_Chi_Minh","베트남 (UTC+7)"],["Asia/Bangkok","태국 (UTC+7)"],
-  ["Asia/Shanghai","중국 (UTC+8)"],["Asia/Singapore","싱가포르 (UTC+8)"],
-  ["Asia/Jakarta","인도네시아 자카르타 (UTC+7)"],["Asia/Kolkata","인도 (UTC+5:30)"],
-  ["Asia/Dubai","UAE 두바이 (UTC+4)"],["Asia/Riyadh","사우디 (UTC+3)"],
-  ["Asia/Karachi","파키스탄 (UTC+5)"],["Asia/Dhaka","방글라데시 (UTC+6)"],
-  ["Africa/Cairo","이집트 (UTC+2/3)"],["Africa/Lagos","나이지리아 (UTC+1)"],
-  ["Africa/Johannesburg","남아공 (UTC+2)"],["Africa/Nairobi","케냐 (UTC+3)"],
-  ["Europe/London","영국 (UTC+0/1)"],["Europe/Paris","프랑스 (UTC+1/2)"],
-  ["Europe/Berlin","독일 (UTC+1/2)"],["Europe/Stockholm","스웨덴 (UTC+1/2)"],
-  ["Europe/Moscow","러시아 모스크바 (UTC+3)"],["Europe/Istanbul","터키 (UTC+3)"],
-  ["America/New_York","미국 뉴욕 (UTC-5/-4)"],["America/Chicago","미국 시카고 (UTC-6/-5)"],
-  ["America/Los_Angeles","미국 LA (UTC-8/-7)"],["America/Sao_Paulo","브라질 (UTC-3)"],
-  ["America/Bogota","콜롬비아 (UTC-5)"],["America/Mexico_City","멕시코 (UTC-6/-5)"],
-  ["America/Lima","페루 (UTC-5)"],["America/Buenos_Aires","아르헨티나 (UTC-3)"],
-  ["Australia/Sydney","호주 시드니 (UTC+10/11)"],["Australia/Melbourne","호주 멜버른 (UTC+10/11)"],
-  ["Pacific/Auckland","뉴질랜드 (UTC+12/13)"],["Pacific/Honolulu","하와이 (UTC-10)"],
+  ['Asia/Seoul','한국 (UTC+9)'],['Asia/Tokyo','일본 (UTC+9)'],
+  ['Asia/Ho_Chi_Minh','베트남 (UTC+7)'],['Asia/Bangkok','태국 (UTC+7)'],
+  ['Asia/Shanghai','중국 (UTC+8)'],['Asia/Singapore','싱가포르 (UTC+8)'],
+  ['Asia/Jakarta','인도네시아 (UTC+7)'],['Asia/Kolkata','인도 (UTC+5:30)'],
+  ['Asia/Dubai','UAE 두바이 (UTC+4)'],['Asia/Riyadh','사우디 (UTC+3)'],
+  ['Asia/Karachi','파키스탄 (UTC+5)'],['Asia/Dhaka','방글라데시 (UTC+6)'],
+  ['Africa/Cairo','이집트 (UTC+2/3)'],['Africa/Lagos','나이지리아 (UTC+1)'],
+  ['Africa/Johannesburg','남아공 (UTC+2)'],['Africa/Nairobi','케냐 (UTC+3)'],
+  ['Europe/London','영국 (UTC+0/1)'],['Europe/Paris','프랑스 (UTC+1/2)'],
+  ['Europe/Berlin','독일 (UTC+1/2)'],['Europe/Stockholm','스웨덴 (UTC+1/2)'],
+  ['Europe/Moscow','러시아 (UTC+3)'],['Europe/Istanbul','터키 (UTC+3)'],
+  ['America/New_York','미국 뉴욕 (UTC-5/-4)'],['America/Chicago','미국 시카고 (UTC-6/-5)'],
+  ['America/Los_Angeles','미국 LA (UTC-8/-7)'],['America/Sao_Paulo','브라질 (UTC-3)'],
+  ['America/Bogota','콜롬비아 (UTC-5)'],['America/Mexico_City','멕시코 (UTC-6/-5)'],
+  ['America/Lima','페루 (UTC-5)'],['America/Buenos_Aires','아르헨티나 (UTC-3)'],
+  ['Australia/Sydney','호주 시드니 (UTC+10/11)'],['Australia/Melbourne','호주 멜버른 (UTC+10/11)'],
+  ['Pacific/Auckland','뉴질랜드 (UTC+12/13)'],['Pacific/Honolulu','하와이 (UTC-10)'],
 ];
 
 // ── Default countries ──
@@ -507,344 +336,598 @@ let countries = [
   { id:'au', name:'호주 (시드니)',   tz:'Australia/Sydney',  flag:'🇦🇺', tzl:'UTC +10/+11' },
 ];
 
+// ── Holiday data (year-keyed, so it won't expire) ──
+// Structure: H[countryId][year] = [{m,d,n}, ...]
+// Falls back to nearest available year gracefully
 const H = {
-  kr:[
-    {m:1,d:1,n:'신정'},
-    {m:2,d:16,n:'설날 연휴'},{m:2,d:17,n:'설날'},{m:2,d:18,n:'설날 연휴'},
-    {m:3,d:1,n:'삼일절'},{m:3,d:2,n:'삼일절 대체공휴일'},
-    {m:5,d:1,n:'근로자의 날'},{m:5,d:5,n:'어린이날'},
-    {m:5,d:24,n:'부처님 오신날'},{m:5,d:25,n:'부처님 오신날 대체'},
-    {m:6,d:3,n:'지방선거일'},
-    {m:8,d:15,n:'광복절'},{m:8,d:17,n:'광복절 대체공휴일'},
-    {m:9,d:24,n:'추석 연휴'},{m:9,d:25,n:'추석'},{m:9,d:26,n:'추석 연휴'},
-    {m:10,d:3,n:'개천절'},{m:10,d:5,n:'개천절 대체공휴일'},
-    {m:10,d:9,n:'한글날'},
-    {m:12,d:25,n:'성탄절'},
-  ],
-  vn:[
-    {m:1,d:1,n:"New Year's Day"},
-    {m:2,d:14,n:'Tết 연휴'},{m:2,d:15,n:'Tết 연휴'},{m:2,d:16,n:'Tết 연휴'},
-    {m:2,d:17,n:'Tết (설날)'},{m:2,d:18,n:'Tết 연휴'},{m:2,d:19,n:'Tết 연휴'},
-    {m:2,d:20,n:'Tết 연휴'},{m:2,d:21,n:'Tết 연휴'},{m:2,d:22,n:'Tết 연휴'},
-    {m:4,d:26,n:"Hung Kings' Day"},{m:4,d:27,n:"Hung Kings' Day (대체)"},
-    {m:4,d:30,n:'Reunification Day'},{m:5,d:1,n:'Labour Day'},
-    {m:9,d:1,n:'National Day 연휴'},{m:9,d:2,n:'National Day'},
-  ],
-  sa:[
-    // Eid al-Fitr 2026: officially confirmed Mar 20 (Saudi Royal Court)
-    // Holiday period: Mar 18 (eve) ~ Mar 22 (private sector 4 days off)
-    {m:3,d:18,n:'Eid al-Fitr 연휴'},{m:3,d:19,n:'Eid al-Fitr 연휴'},
-    {m:3,d:20,n:'Eid al-Fitr'},{m:3,d:21,n:'Eid al-Fitr 연휴'},{m:3,d:22,n:'Eid al-Fitr 연휴'},
-    // Eid al-Adha 2026: officially confirmed May 27 (Saudi Supreme Court)
-    // Holiday: Arafah Day May 26 + 4 days = May 26~29
-    {m:5,d:26,n:'Day of Arafah'},{m:5,d:27,n:'Eid al-Adha'},
-    {m:5,d:28,n:'Eid al-Adha 연휴'},{m:5,d:29,n:'Eid al-Adha 연휴'},
-    {m:2,d:22,n:'Founding Day'},
-    {m:9,d:23,n:'National Day'},
-  ],
-  eg:[
-    {m:1,d:7,n:'Coptic Christmas'},
-    {m:1,d:25,n:'Revolution Day'},
-    // Eid al-Fitr 2026: Mar 20 (Egypt follows Saudi/same date)
-    {m:3,d:20,n:'Eid al-Fitr'},{m:3,d:21,n:'Eid al-Fitr 연휴'},{m:3,d:22,n:'Eid al-Fitr 연휴'},
-    {m:4,d:25,n:'Sinai Liberation Day'},
-    {m:5,d:1,n:'Labour Day'},
-    // Eid al-Adha 2026: May 27
-    {m:5,d:27,n:'Eid al-Adha'},{m:5,d:28,n:'Eid al-Adha 연휴'},
-    {m:5,d:29,n:'Eid al-Adha 연휴'},{m:5,d:30,n:'Eid al-Adha 연휴'},
-    {m:6,d:30,n:'June 30 Revolution'},
-    {m:7,d:23,n:'Revolution Day'},
-    {m:10,d:6,n:'Armed Forces Day'},
-  ],
-  co:[
-    {m:1,d:1,n:'Año Nuevo'},
-    {m:1,d:12,n:'Reyes Magos'},
-    {m:3,d:23,n:'San José'},
-    {m:4,d:2,n:'Jueves Santo'},{m:4,d:3,n:'Viernes Santo'},
-    {m:5,d:1,n:'Día del Trabajo'},
-    {m:5,d:18,n:'Ascensión'},
-    {m:6,d:8,n:'Corpus Christi'},
-    {m:6,d:15,n:'Sagrado Corazón'},
-    {m:6,d:29,n:'San Pedro y San Pablo'},
-    {m:7,d:20,n:'Independencia'},
-    {m:8,d:7,n:'Batalla de Boyacá'},
-    {m:8,d:17,n:'Asunción'},
-    {m:10,d:12,n:'Día de la Raza'},
-    {m:11,d:2,n:'Todos los Santos'},
-    {m:11,d:16,n:'Indep. de Cartagena'},
-    {m:12,d:8,n:'Inmaculada Concepción'},
-    {m:12,d:25,n:'Navidad'},
-  ],
-  se:[
-    {m:1,d:1,n:'Nyårsdagen'},
-    {m:1,d:6,n:'Trettondag Jul'},
-    {m:4,d:3,n:'Långfredag'},
-    {m:4,d:5,n:'Påskdagen'},{m:4,d:6,n:'Annandag Påsk'},
-    {m:5,d:1,n:'Första Maj'},
-    {m:5,d:14,n:'Kristi Himmelsfärd'},
-    {m:5,d:24,n:'Pingstdagen'},
-    {m:6,d:6,n:'Sveriges Nationaldag'},
-    {m:6,d:19,n:'Midsommarafton'},{m:6,d:20,n:'Midsommardagen'},
-    {m:11,d:7,n:'Alla Helgons Dag'},
-    {m:12,d:25,n:'Juldagen'},{m:12,d:26,n:'Annandag Jul'},
-  ],
-  au:[
-    {m:1,d:1,n:"New Year's Day"},
-    {m:1,d:26,n:'Australia Day'},
-    {m:4,d:3,n:'Good Friday'},{m:4,d:4,n:'Easter Saturday'},
-    {m:4,d:5,n:'Easter Sunday'},{m:4,d:6,n:'Easter Monday'},
-    {m:4,d:25,n:'ANZAC Day'},{m:4,d:27,n:'ANZAC Day (substitute Mon)'},
-    {m:6,d:8,n:"King's Birthday (NSW)"},
-    {m:8,d:3,n:'Bank Holiday (NSW)'},
-    {m:10,d:5,n:'Labour Day (NSW)'},
-    {m:12,d:25,n:'Christmas Day'},
-    {m:12,d:26,n:'Boxing Day'},
-    {m:12,d:28,n:'Boxing Day (substitute Mon)'},
-  ],
+  kr: {
+    2026: [
+      {m:1,d:1,n:'신정'},
+      {m:2,d:16,n:'설날 연휴'},{m:2,d:17,n:'설날'},{m:2,d:18,n:'설날 연휴'},
+      {m:3,d:1,n:'삼일절'},{m:3,d:2,n:'삼일절 대체공휴일'},
+      {m:5,d:1,n:'근로자의 날'},{m:5,d:5,n:'어린이날'},
+      {m:5,d:24,n:'부처님 오신날'},{m:5,d:25,n:'부처님 오신날 대체'},
+      {m:6,d:3,n:'지방선거일'},
+      {m:8,d:15,n:'광복절'},{m:8,d:17,n:'광복절 대체공휴일'},
+      {m:9,d:24,n:'추석 연휴'},{m:9,d:25,n:'추석'},{m:9,d:26,n:'추석 연휴'},
+      {m:10,d:3,n:'개천절'},{m:10,d:5,n:'개천절 대체공휴일'},
+      {m:10,d:9,n:'한글날'},{m:12,d:25,n:'성탄절'},
+    ],
+  },
+  vn: {
+    2026: [
+      {m:1,d:1,n:"New Year's Day"},
+      {m:2,d:14,n:'Tết 연휴'},{m:2,d:15,n:'Tết 연휴'},{m:2,d:16,n:'Tết 연휴'},
+      {m:2,d:17,n:'Tết'},{m:2,d:18,n:'Tết 연휴'},{m:2,d:19,n:'Tết 연휴'},
+      {m:2,d:20,n:'Tết 연휴'},{m:2,d:21,n:'Tết 연휴'},{m:2,d:22,n:'Tết 연휴'},
+      {m:4,d:26,n:"Hung Kings' Day"},{m:4,d:27,n:"Hung Kings' Day (대체)"},
+      {m:4,d:30,n:'Reunification Day'},{m:5,d:1,n:'Labour Day'},
+      {m:9,d:1,n:'National Day 연휴'},{m:9,d:2,n:'National Day'},
+    ],
+  },
+  sa: {
+    2026: [
+      {m:2,d:22,n:'Founding Day'},
+      {m:3,d:18,n:'Eid al-Fitr 연휴'},{m:3,d:19,n:'Eid al-Fitr 연휴'},
+      {m:3,d:20,n:'Eid al-Fitr'},{m:3,d:21,n:'Eid al-Fitr 연휴'},{m:3,d:22,n:'Eid al-Fitr 연휴'},
+      {m:5,d:26,n:'Day of Arafah'},{m:5,d:27,n:'Eid al-Adha'},
+      {m:5,d:28,n:'Eid al-Adha 연휴'},{m:5,d:29,n:'Eid al-Adha 연휴'},
+      {m:9,d:23,n:'National Day'},
+    ],
+  },
+  eg: {
+    2026: [
+      {m:1,d:7,n:'Coptic Christmas'},{m:1,d:25,n:'Revolution Day'},
+      {m:3,d:20,n:'Eid al-Fitr'},{m:3,d:21,n:'Eid al-Fitr 연휴'},{m:3,d:22,n:'Eid al-Fitr 연휴'},
+      {m:4,d:25,n:'Sinai Liberation Day'},{m:5,d:1,n:'Labour Day'},
+      {m:5,d:27,n:'Eid al-Adha'},{m:5,d:28,n:'Eid al-Adha 연휴'},
+      {m:5,d:29,n:'Eid al-Adha 연휴'},{m:5,d:30,n:'Eid al-Adha 연휴'},
+      {m:6,d:30,n:'June 30 Revolution'},{m:7,d:23,n:'Revolution Day'},
+      {m:10,d:6,n:'Armed Forces Day'},
+    ],
+  },
+  co: {
+    2026: [
+      {m:1,d:1,n:'Año Nuevo'},{m:1,d:12,n:'Reyes Magos'},
+      {m:3,d:23,n:'San José'},
+      {m:4,d:2,n:'Jueves Santo'},{m:4,d:3,n:'Viernes Santo'},
+      {m:5,d:1,n:'Día del Trabajo'},{m:5,d:18,n:'Ascensión'},
+      {m:6,d:8,n:'Corpus Christi'},{m:6,d:15,n:'Sagrado Corazón'},
+      {m:6,d:29,n:'San Pedro y San Pablo'},
+      {m:7,d:20,n:'Independencia'},{m:8,d:7,n:'Batalla de Boyacá'},
+      {m:8,d:17,n:'Asunción'},{m:10,d:12,n:'Día de la Raza'},
+      {m:11,d:2,n:'Todos los Santos'},{m:11,d:16,n:'Indep. de Cartagena'},
+      {m:12,d:8,n:'Inmaculada Concepción'},{m:12,d:25,n:'Navidad'},
+    ],
+  },
+  se: {
+    2026: [
+      {m:1,d:1,n:'Nyårsdagen'},{m:1,d:6,n:'Trettondag Jul'},
+      {m:4,d:3,n:'Långfredag'},{m:4,d:5,n:'Påskdagen'},{m:4,d:6,n:'Annandag Påsk'},
+      {m:5,d:1,n:'Första Maj'},{m:5,d:14,n:'Kristi Himmelsfärd'},{m:5,d:24,n:'Pingstdagen'},
+      {m:6,d:6,n:'Sveriges Nationaldag'},
+      {m:6,d:19,n:'Midsommarafton'},{m:6,d:20,n:'Midsommardagen'},
+      {m:11,d:7,n:'Alla Helgons Dag'},
+      {m:12,d:25,n:'Juldagen'},{m:12,d:26,n:'Annandag Jul'},
+    ],
+  },
+  au: {
+    2026: [
+      {m:1,d:1,n:"New Year's Day"},{m:1,d:26,n:'Australia Day'},
+      {m:4,d:3,n:'Good Friday'},{m:4,d:4,n:'Easter Saturday'},
+      {m:4,d:5,n:'Easter Sunday'},{m:4,d:6,n:'Easter Monday'},
+      {m:4,d:25,n:'ANZAC Day'},{m:4,d:27,n:'ANZAC Day (substitute)'},
+      {m:6,d:8,n:"King's Birthday (NSW)"},
+      {m:8,d:3,n:'Bank Holiday (NSW)'},{m:10,d:5,n:'Labour Day (NSW)'},
+      {m:12,d:25,n:'Christmas Day'},{m:12,d:26,n:'Boxing Day'},
+      {m:12,d:28,n:'Boxing Day (substitute)'},
+    ],
+  },
 };
 
 let order = countries.map((_,i)=>i);
 
 // ── Helpers ──
+
+// Get current date in a given timezone (browser-safe)
 function localDate(tz) {
-  const s = new Date().toLocaleString('en-US',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit'});
-  const [mm,dd,yyyy]=s.split('/'); return new Date(+yyyy,+mm-1,+dd);
+  const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year:'numeric', month:'2-digit', day:'2-digit' });
+  const [y,m,d] = fmt.format(new Date()).split('-').map(Number);
+  return { y, m, d };
 }
-function holiday(id,tz) {
-  const d=localDate(tz),m=d.getMonth()+1,day=d.getDate();
-  return (H[id]||[]).find(h=>h.m===m&&h.d===day)||null;
+
+// Look up holiday for today in a given country/tz, using correct year data
+function holiday(id, tz) {
+  const { y, m, d } = localDate(tz);
+  // Try exact year, then nearest available year (graceful degradation)
+  const countryH = H[id];
+  if (!countryH) return null;
+  const years = Object.keys(countryH).map(Number).sort((a,b)=>Math.abs(a-y)-Math.abs(b-y));
+  const list = countryH[years[0]] || [];
+  const match = list.find(h => h.m === m && h.d === d);
+  if (!match) return null;
+  // Only show holiday if data year matches current year (avoid stale data silently)
+  if (years[0] !== y) return { ...match, stale: true };
+  return match;
 }
+
+// Format current time for a timezone → { hm: "3:05", ap: "PM" }
 function timeParts(tz) {
-  const s=new Date().toLocaleString('en-US',{timeZone:tz,hour:'numeric',minute:'2-digit',hour12:true});
-  const r=s.match(/^(\d+:\d+)\s+(AM|PM)$/i);
-  return r?{hm:r[1],ap:r[2].toUpperCase()}:{hm:s,ap:''};
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true
+  }).formatToParts(new Date());
+  let hm = '', ap = '';
+  parts.forEach(({ type, value }) => {
+    if (type === 'hour' || type === 'minute') hm += (hm ? ':' : '') + value;
+    if (type === 'dayPeriod') ap = value.toUpperCase();
+  });
+  // Normalize to plain space (some browsers use narrow no-break space)
+  return { hm: hm.replace(/\u202F/g,' ').trim(), ap };
 }
+
+// Format current date string for a timezone
 function dateStr(tz) {
-  return new Date().toLocaleDateString('ko-KR',{timeZone:tz,year:'numeric',month:'long',day:'numeric',weekday:'short'});
+  return new Date().toLocaleDateString('ko-KR', {
+    timeZone: tz, year:'numeric', month:'long', day:'numeric', weekday:'short'
+  });
 }
+
+// Get UTC offset in minutes for a timezone at current time
 function offsetMin(tz) {
-  const now=new Date();
-  const u=new Date(now.toLocaleString('en-US',{timeZone:'UTC'}));
-  const l=new Date(now.toLocaleString('en-US',{timeZone:tz}));
-  return (l-u)/60000;
+  const now = new Date();
+  const utcStr = now.toLocaleString('en-US', { timeZone: 'UTC' });
+  const tzStr  = now.toLocaleString('en-US', { timeZone: tz });
+  return (new Date(tzStr) - new Date(utcStr)) / 60000;
 }
+
+// Build a readable UTC offset label
 function tzShortLabel(tz) {
   const off = offsetMin(tz);
-  const sign = off>=0?'+':'-';
-  const h = Math.floor(Math.abs(off)/60), m = Math.abs(off)%60;
-  return 'UTC'+sign+h+(m?':'+String(m).padStart(2,'0'):'');
+  const sign = off >= 0 ? '+' : '-';
+  const h = Math.floor(Math.abs(off) / 60);
+  const m = Math.abs(off) % 60;
+  return 'UTC' + sign + h + (m ? ':' + String(m).padStart(2,'0') : '');
 }
 
 // ── Populate converter selects ──
 function populateConverterSel() {
-  ['fromTz','toTz'].forEach(id=>{
-    const s=document.getElementById(id); s.innerHTML='';
-    countries.forEach(c=>{s.add(new Option(c.flag+' '+c.name,c.tz));});
+  ['fromTz','toTz'].forEach(id => {
+    const sel = document.getElementById(id);
+    const prev = sel.value;
+    sel.innerHTML = '';
+    countries.forEach(c => sel.add(new Option(c.flag + ' ' + c.name, c.tz)));
+    if (prev && [...sel.options].some(o => o.value === prev)) sel.value = prev;
+    else if (id === 'toTz') sel.selectedIndex = Math.min(1, sel.options.length - 1);
   });
-  document.getElementById('toTz').selectedIndex=1;
 }
 
-// ── Populate add-country timezone select ──
 function populateAddTz() {
-  const s=document.getElementById('addTz'); s.innerHTML='';
-  ALL_TZ.forEach(([tz,label])=>{ s.add(new Option(label,tz)); });
+  const s = document.getElementById('addTz');
+  s.innerHTML = '';
+  ALL_TZ.forEach(([tz, label]) => s.add(new Option(label, tz)));
 }
 
-// ── Time datalist ──
 function buildTimelist() {
-  const dl=document.getElementById('timeList'); dl.innerHTML='';
-  for(let h=1;h<=12;h++){
-    ['00','15','30','45'].forEach(m=>{
-      const o=document.createElement('option');
-      o.value=h+':'+m; dl.appendChild(o);
+  const dl = document.getElementById('timeList');
+  dl.innerHTML = '';
+  for (let h = 1; h <= 12; h++) {
+    ['00','15','30','45'].forEach(m => {
+      const o = document.createElement('option');
+      o.value = h + ':' + m;
+      dl.appendChild(o);
     });
   }
-  const now=new Date();
-  // Set today's date as default
-  const yyyy=now.getFullYear();
-  const mm2=String(now.getMonth()+1).padStart(2,'0');
-  const dd2=String(now.getDate()).padStart(2,'0');
-  document.getElementById('fromDate').value=`${yyyy}-${mm2}-${dd2}`;
-
-  const nowH=now.getHours();
-  document.getElementById('ampmSel').value=nowH>=12?'PM':'AM';
-  const h12=nowH%12||12, mm=String(now.getMinutes()).padStart(2,'0');
-  document.getElementById('fromTime').value=h12+':'+mm;
+  const now = new Date();
+  // Date default = today (browser local)
+  const yyyy = now.getFullYear();
+  const mm   = String(now.getMonth() + 1).padStart(2,'0');
+  const dd   = String(now.getDate()).padStart(2,'0');
+  document.getElementById('fromDate').value = `${yyyy}-${mm}-${dd}`;
+  // Time default = current time in 12h
+  const nowH = now.getHours();
+  document.getElementById('ampmSel').value = nowH >= 12 ? 'PM' : 'AM';
+  const h12 = nowH % 12 || 12;
+  const min = String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('fromTime').value = h12 + ':' + min;
 }
 
-// ── Converter logic ──
+// ── Converter ──
+// Convert wall-clock time in FROM timezone → UTC moment
+function wallClockToUTC(tz, yr, mo, dy, h24, m) {
+  // Naive UTC string (pretend it's UTC, then correct for actual tz offset)
+  const naive = new Date(Date.UTC(yr, mo-1, dy, h24, m, 0));
+  // What does this UTC moment look like in `tz`?
+  const dtf = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz, year:'numeric', month:'2-digit', day:'2-digit',
+    hour:'2-digit', minute:'2-digit', second:'2-digit', hour12: false
+  });
+  const p = {};
+  dtf.formatToParts(naive).forEach(({ type, value }) => { p[type] = value; });
+  const tzH  = parseInt(p.hour === '24' ? '0' : p.hour);
+  const tzMin = parseInt(p.minute);
+  const tzD  = parseInt(p.day);
+  const tzMo = parseInt(p.month);
+  const tzY  = parseInt(p.year);
+  // Shift: desired wall-clock − actual tz-local wall-clock
+  const desired = Date.UTC(yr, mo-1, dy, h24, m, 0);
+  const actual  = Date.UTC(tzY, tzMo-1, tzD, tzH, tzMin, 0);
+  return new Date(naive.getTime() + (desired - actual));
+}
+
 function doConvert() {
-  const raw=document.getElementById('fromTime').value.trim();
-  const ampm=document.getElementById('ampmSel').value;
-  const dateVal=document.getElementById('fromDate').value; // "YYYY-MM-DD"
-  const resTime=document.getElementById('resTime');
-  const resCountry=document.getElementById('resCountry');
-  const resDate=document.getElementById('resDate');
+  const raw     = document.getElementById('fromTime').value.trim();
+  const ampm    = document.getElementById('ampmSel').value;
+  const dateVal = document.getElementById('fromDate').value;
+  const resTime    = document.getElementById('resTime');
+  const resCountry = document.getElementById('resCountry');
+  const resDate    = document.getElementById('resDate');
 
-  if(!raw){resTime.textContent='—';resCountry.textContent='';resDate.textContent='';return;}
+  if (!raw) { setText(resTime,'—'); setText(resCountry,''); setText(resDate,''); return; }
 
-  let h,m;
-  const cM=raw.match(/^(\d{1,2}):(\d{2})$/);
-  const pM=raw.match(/^(\d{1,4})$/);
-  if(cM){h=parseInt(cM[1]);m=parseInt(cM[2]);}
-  else if(pM){const n=raw.padStart(4,'0');h=parseInt(n.slice(0,2));m=parseInt(n.slice(2));}
-  else{resTime.textContent='형식 오류';resCountry.textContent='(예: 9:30)';resDate.textContent='';return;}
+  let h, m;
+  const cM = raw.match(/^(\d{1,2}):(\d{2})$/);
+  const pM = raw.match(/^(\d{1,4})$/);
+  if (cM)      { h = parseInt(cM[1]); m = parseInt(cM[2]); }
+  else if (pM) { const n = raw.padStart(4,'0'); h = parseInt(n.slice(0,2)); m = parseInt(n.slice(2)); }
+  else { setText(resTime,'형식 오류'); setText(resCountry,'예: 9:30'); setText(resDate,''); return; }
 
-  if(h<1||h>12||m>59){resTime.textContent='유효하지 않은';resCountry.textContent='시간입니다';resDate.textContent='';return;}
+  if (h < 1 || h > 12 || m > 59) { setText(resTime,'유효하지 않은 시간'); setText(resCountry,''); setText(resDate,''); return; }
 
-  let h24=h%12; if(ampm==='PM') h24+=12;
+  // 12h → 24h
+  let h24 = h % 12;
+  if (ampm === 'PM') h24 += 12;
 
-  const ft=document.getElementById('fromTz').value;
-  const tt=document.getElementById('toTz').value;
+  const ft = document.getElementById('fromTz').value;
+  const tt = document.getElementById('toTz').value;
 
-  // Build the base date from the date picker, set the time in the FROM timezone's local context
-  let baseDate;
-  if(dateVal) {
-    const [yr,mo,dy]=dateVal.split('-').map(Number);
-    // Create a date string that represents the chosen date + time in the FROM timezone
-    // We do this by finding the UTC equivalent of that local datetime
-    const localStr=`${yr}-${String(mo).padStart(2,'0')}-${String(dy).padStart(2,'0')}T${String(h24).padStart(2,'0')}:${String(m).padStart(2,'0')}:00`;
-    // Get the offset of the FROM timezone at approximately that date
-    const approx=new Date(localStr);
-    const fromOff=offsetMin(ft);
-    // UTC ms = local ms - offset ms
-    baseDate=new Date(approx.getTime() - fromOff*60000);
+  let yr, mo, dy;
+  if (dateVal) {
+    [yr, mo, dy] = dateVal.split('-').map(Number);
   } else {
-    baseDate=new Date();
-    baseDate.setHours(h24,m,0,0);
-    const fromOff=offsetMin(ft);
-    const todayOff=-(baseDate.getTimezoneOffset());
-    baseDate=new Date(baseDate.getTime()-(fromOff-todayOff)*60000);
+    const now = new Date();
+    yr = now.getFullYear(); mo = now.getMonth()+1; dy = now.getDate();
   }
 
-  const toOff=offsetMin(tt);
-  const target=new Date(baseDate.getTime()+toOff*60000);
+  const utcMoment = wallClockToUTC(ft, yr, mo, dy, h24, m);
 
-  const rh=target.getUTCHours(), rm2=String(target.getUTCMinutes()).padStart(2,'0');
-  const rap=rh>=12?'PM':'AM', rh12=rh%12||12;
-  const toC=countries.find(c=>c.tz===tt);
-  const name=toC?.name||tt;
+  // Render in TO timezone using Intl (most accurate cross-browser)
+  const timePts = new Intl.DateTimeFormat('en-US', {
+    timeZone: tt, hour: 'numeric', minute: '2-digit', hour12: true
+  }).formatToParts(utcMoment);
 
-  const dateFmt=target.toLocaleDateString('ko-KR',{timeZone:'UTC',year:'numeric',month:'long',day:'numeric',weekday:'short'});
+  let rHm = '', rAp = '';
+  timePts.forEach(({ type, value }) => {
+    if (type === 'hour' || type === 'minute') rHm += (rHm ? ':' : '') + value;
+    if (type === 'dayPeriod') rAp = value.replace(/\u202F/g,' ').trim().toUpperCase();
+  });
 
-  resTime.textContent=rh12+':'+rm2+' '+rap;
-  resCountry.textContent=(toC?.flag||'')+' '+name;
-  resDate.textContent=dateFmt;
+  const toC = countries.find(c => c.tz === tt);
+  setText(resTime, rHm + ' ' + rAp);
+  setText(resCountry, (toC?.flag || '') + ' ' + (toC?.name || tt));
+  setText(resDate, new Intl.DateTimeFormat('ko-KR', {
+    timeZone: tt, year:'numeric', month:'long', day:'numeric', weekday:'short'
+  }).format(utcMoment));
 }
 
 // ── Add country ──
-function addCountry() {
-  const flag=document.getElementById('addFlag').value.trim()||'🌍';
-  const name=document.getElementById('addName').value.trim();
-  const tz=document.getElementById('addTz').value;
-  if(!name){alert('국가명을 입력해주세요.');return;}
-  const id='custom_'+Date.now();
-  const tzl=tzShortLabel(tz);
-  countries.push({id,name,tz,flag,tzl});
-  order.push(countries.length-1);
-  document.getElementById('addFlag').value='';
-  document.getElementById('addName').value='';
+document.getElementById('addBtn').addEventListener('click', () => {
+  const flagRaw = document.getElementById('addFlag').value.trim();
+  const nameRaw = document.getElementById('addName').value.trim();
+  const tz      = document.getElementById('addTz').value;
+
+  // Validate name (sanitize: strip any HTML)
+  const name = nameRaw.replace(/[<>"'&]/g, '').trim();
+  if (!name) { alert('국가명을 입력해주세요.'); return; }
+
+  // Prevent duplicate timezone
+  if (countries.some(c => c.tz === tz)) {
+    alert('이미 추가된 시간대입니다.'); return;
+  }
+
+  // Validate flag (allow emoji or leave blank for default)
+  const flag = flagRaw || '🌍';
+
+  const id  = 'custom_' + Date.now();
+  const tzl = tzShortLabel(tz);
+  countries.push({ id, name, tz, flag, tzl });
+  order.push(countries.length - 1);
+  document.getElementById('addFlag').value = '';
+  document.getElementById('addName').value = '';
   populateConverterSel();
   buildCards();
   updateCards();
-}
+});
 
 // ── Remove country ──
 function removeCountry(idx) {
-  const pos=order.indexOf(idx);
-  if(pos!==-1) order.splice(pos,1);
-  // remap order indices after removal
-  order=order.map(i=>i>idx?i-1:i);
-  countries.splice(idx,1);
+  order = order.filter(i => i !== idx).map(i => i > idx ? i - 1 : i);
+  countries.splice(idx, 1);
   populateConverterSel();
   buildCards();
   updateCards();
 }
 
-// ── Build clock cards (gallery) ──
+// ── Build cards ──
 function buildCards() {
-  const list=document.getElementById('clockList'); list.innerHTML='';
-  order.forEach((idx,pos)=>{
-    const c=countries[idx]; if(!c)return;
-    const hol=holiday(c.id,c.tz);
-    let cls='clock-card';
-    if(hol) cls+=' is-holiday';
-    else if(c.korea) cls+=' is-korea';
-    const div=document.createElement('div');
-    div.className=cls;
-    div.dataset.idx=idx; div.dataset.pos=pos; div.draggable=true;
-    div.style.animation=`cardIn 0.3s ${pos*0.05}s both`;
-    const isDefault=['kr','vn','sa','eg','co','se','au'].includes(c.id);
-    div.innerHTML=`
-      ${!isDefault?`<button class="remove-btn" onclick="removeCountry(${idx})" title="삭제">×</button>`:''}
-      <div class="card-main">
-        <div class="card-top">
-          <div class="card-top-left">
-            <div class="flag-box">${c.flag}</div>
-            <div class="card-info">
-              <div class="cname">${c.name}</div>
-              <div class="ctz">${c.tzl}</div>
-            </div>
-          </div>
-          <div class="handle"><span></span><span></span><span></span></div>
-        </div>
-        <div class="card-time">
-          <div class="time-main">
-            <span class="tdig" id="td-${idx}">--:--</span>
-            <span class="tampm" id="ta-${idx}"></span>
-          </div>
-          <div class="tdate" id="tdt-${idx}"></div>
-          <span class="hol-pill" id="pill-${idx}">${hol?hol.n:''}</span>
-        </div>
-      </div>
-      <div class="hol-footer" id="hf-${idx}">${hol?'🗓 오늘은 '+hol.n+' 공휴일입니다':''}</div>`;
+  const list = document.getElementById('clockList');
+  list.innerHTML = '';
+  order.forEach((idx, pos) => {
+    const c = countries[idx];
+    if (!c) return;
+    const hol = holiday(c.id, c.tz);
+    let cls = 'clock-card';
+    if (hol && !hol.stale) cls += ' is-holiday';
+    else if (c.korea) cls += ' is-korea';
+
+    const div = document.createElement('div');
+    div.className = cls;
+    div.dataset.idx = String(idx);
+    div.dataset.pos = String(pos);
+    div.draggable = true;
+    div.style.animation = `cardIn 0.3s ${pos * 0.05}s both`;
+
+    const isDefault = ['kr','vn','sa','eg','co','se','au'].includes(c.id);
+
+    // Build DOM safely (no innerHTML for user content)
+    // Remove button (custom countries only)
+    if (!isDefault) {
+      const btn = document.createElement('button');
+      btn.className = 'remove-btn';
+      btn.title = '삭제';
+      btn.textContent = '×';
+      btn.dataset.removeIdx = String(idx);
+      div.appendChild(btn);
+    }
+
+    const cardMain = document.createElement('div');
+    cardMain.className = 'card-main';
+
+    const cardTop = document.createElement('div');
+    cardTop.className = 'card-top';
+
+    const topLeft = document.createElement('div');
+    topLeft.className = 'card-top-left';
+
+    const flagBox = document.createElement('div');
+    flagBox.className = 'flag-box';
+    flagBox.textContent = c.flag; // textContent: XSS safe
+
+    const cardInfo = document.createElement('div');
+    cardInfo.className = 'card-info';
+
+    const cname = document.createElement('div');
+    cname.className = 'cname';
+    cname.textContent = c.name; // textContent: XSS safe
+
+    const ctz = document.createElement('div');
+    ctz.className = 'ctz';
+    ctz.textContent = c.tzl;
+
+    cardInfo.appendChild(cname);
+    cardInfo.appendChild(ctz);
+    topLeft.appendChild(flagBox);
+    topLeft.appendChild(cardInfo);
+
+    const handle = document.createElement('div');
+    handle.className = 'handle';
+    handle.setAttribute('aria-hidden', 'true');
+    for (let i = 0; i < 3; i++) {
+      const s = document.createElement('span');
+      handle.appendChild(s);
+    }
+
+    cardTop.appendChild(topLeft);
+    cardTop.appendChild(handle);
+
+    const cardTime = document.createElement('div');
+    cardTime.className = 'card-time';
+
+    const timeMain = document.createElement('div');
+    timeMain.className = 'time-main';
+
+    const tdig = document.createElement('span');
+    tdig.className = 'tdig';
+    tdig.id = 'td-' + idx;
+    tdig.textContent = '--:--';
+
+    const tampm = document.createElement('span');
+    tampm.className = 'tampm';
+    tampm.id = 'ta-' + idx;
+
+    timeMain.appendChild(tdig);
+    timeMain.appendChild(tampm);
+
+    const tdate = document.createElement('div');
+    tdate.className = 'tdate';
+    tdate.id = 'tdt-' + idx;
+
+    const holPill = document.createElement('span');
+    holPill.className = 'hol-pill';
+    holPill.id = 'pill-' + idx;
+    if (hol && !hol.stale) holPill.textContent = hol.n;
+
+    cardTime.appendChild(timeMain);
+    cardTime.appendChild(tdate);
+    cardTime.appendChild(holPill);
+
+    cardMain.appendChild(cardTop);
+    cardMain.appendChild(cardTime);
+
+    const holFooter = document.createElement('div');
+    holFooter.className = 'hol-footer';
+    holFooter.id = 'hf-' + idx;
+    if (hol && !hol.stale) holFooter.textContent = '🗓 오늘은 ' + hol.n + ' 공휴일입니다';
+
+    div.appendChild(cardMain);
+    div.appendChild(holFooter);
     list.appendChild(div);
   });
+
+  // Attach remove button listeners
+  list.querySelectorAll('.remove-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      removeCountry(parseInt(btn.dataset.removeIdx));
+    });
+  });
+
   attachDrag();
+  attachTouchDrag();
 }
 
-// ── Update clock values ──
+// ── Update cards ──
 function updateCards() {
-  order.forEach(idx=>{
-    const c=countries[idx]; if(!c)return;
-    const p=timeParts(c.tz);
-    const el=document.getElementById('td-'+idx); if(!el)return;
-    el.textContent=p.hm;
-    document.getElementById('ta-'+idx).textContent=p.ap;
-    document.getElementById('tdt-'+idx).textContent=dateStr(c.tz);
-    const hol=holiday(c.id,c.tz);
-    const card=document.querySelector('[data-idx="'+idx+'"]'); if(!card)return;
-    if(hol){
+  order.forEach(idx => {
+    const c = countries[idx];
+    if (!c) return;
+    const { hm, ap } = timeParts(c.tz);
+    const el = document.getElementById('td-' + idx);
+    if (!el) return;
+    setText(el, hm);
+    setText(document.getElementById('ta-' + idx), ap);
+    setText(document.getElementById('tdt-' + idx), dateStr(c.tz));
+
+    const hol = holiday(c.id, c.tz);
+    const card = document.querySelector('[data-idx="' + idx + '"]');
+    if (!card) return;
+
+    if (hol && !hol.stale) {
       card.classList.add('is-holiday');
-      document.getElementById('pill-'+idx).textContent=hol.n;
-      document.getElementById('hf-'+idx).textContent='🗓 오늘은 '+hol.n+' 공휴일입니다';
+      card.classList.remove('is-korea');
+      setText(document.getElementById('pill-' + idx), hol.n);
+      setText(document.getElementById('hf-' + idx), '🗓 오늘은 ' + hol.n + ' 공휴일입니다');
     } else {
       card.classList.remove('is-holiday');
-      document.getElementById('pill-'+idx).textContent='';
-      document.getElementById('hf-'+idx).textContent='';
+      if (c.korea) card.classList.add('is-korea');
+      setText(document.getElementById('pill-' + idx), '');
+      setText(document.getElementById('hf-' + idx), '');
     }
   });
 }
 
 function updateToday() {
-  document.getElementById('todayStr').textContent=
-    new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+  setText(document.getElementById('todayStr'),
+    new Date().toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric', weekday:'long' })
+  );
+  // Stale data warning if current year isn't in holiday data
+  const yr = new Date().getFullYear();
+  const hasData = Object.values(H).every(c => c[yr]);
+  setText(document.getElementById('yearNote'),
+    hasData ? '' : `※ ${yr}년 공휴일 데이터가 업데이트 대기 중입니다. 2026년 데이터로 표시됩니다.`
+  );
 }
 
-// ── Drag & drop ──
-let dragSrc=null;
-function attachDrag(){
-  document.querySelectorAll('.clock-card').forEach(el=>{
-    el.addEventListener('dragstart',e=>{dragSrc=el;el.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
-    el.addEventListener('dragend',()=>{el.classList.remove('dragging');document.querySelectorAll('.clock-card').forEach(i=>i.classList.remove('drag-over'));});
-    el.addEventListener('dragover',e=>{e.preventDefault();if(el!==dragSrc){document.querySelectorAll('.clock-card').forEach(i=>i.classList.remove('drag-over'));el.classList.add('drag-over');}});
-    el.addEventListener('drop',e=>{
-      e.preventDefault();if(el===dragSrc)return;
-      const sp=parseInt(dragSrc.dataset.pos),dp=parseInt(el.dataset.pos);
-      const n=[...order];const[rm]=n.splice(sp,1);n.splice(dp,0,rm);order=n;
-      buildCards();updateCards();
+// ── Drag & Drop (desktop) ──
+let dragSrc = null;
+function attachDrag() {
+  document.querySelectorAll('.clock-card').forEach(el => {
+    el.addEventListener('dragstart', e => {
+      dragSrc = el;
+      el.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', el.dataset.idx);
+    });
+    el.addEventListener('dragend', () => {
+      el.classList.remove('dragging');
+      document.querySelectorAll('.clock-card').forEach(i => i.classList.remove('drag-over'));
+      dragSrc = null;
+    });
+    el.addEventListener('dragover', e => {
+      e.preventDefault();
+      if (el !== dragSrc) {
+        document.querySelectorAll('.clock-card').forEach(i => i.classList.remove('drag-over'));
+        el.classList.add('drag-over');
+      }
+    });
+    el.addEventListener('drop', e => {
+      e.preventDefault();
+      if (!dragSrc || el === dragSrc) return;
+      const sp = parseInt(dragSrc.dataset.pos);
+      const dp = parseInt(el.dataset.pos);
+      const n = [...order];
+      const [rm] = n.splice(sp, 1);
+      n.splice(dp, 0, rm);
+      order = n;
+      buildCards();
+      updateCards();
     });
   });
+}
+
+// ── Touch drag (mobile) ──
+function attachTouchDrag() {
+  let touchSrc = null, clone = null, startX = 0, startY = 0;
+
+  document.querySelectorAll('.clock-card').forEach(el => {
+    el.addEventListener('touchstart', e => {
+      touchSrc = el;
+      const t = e.touches[0];
+      startX = t.clientX; startY = t.clientY;
+      clone = el.cloneNode(true);
+      clone.style.cssText = `
+        position:fixed; pointer-events:none; opacity:0.75; z-index:9999;
+        width:${el.offsetWidth}px; transform:scale(1.04);
+        left:${el.getBoundingClientRect().left}px; top:${el.getBoundingClientRect().top}px;
+        box-shadow:0 8px 30px rgba(37,99,235,0.25);
+      `;
+      document.body.appendChild(clone);
+      el.style.opacity = '0.3';
+    }, { passive: true });
+
+    el.addEventListener('touchmove', e => {
+      if (!clone) return;
+      e.preventDefault();
+      const t = e.touches[0];
+      const dx = t.clientX - startX, dy = t.clientY - startY;
+      const rect = touchSrc.getBoundingClientRect();
+      clone.style.left = (rect.left + dx) + 'px';
+      clone.style.top  = (rect.top  + dy) + 'px';
+      // Find card under finger
+      clone.style.display = 'none';
+      const under = document.elementFromPoint(t.clientX, t.clientY);
+      clone.style.display = '';
+      const targetCard = under?.closest('.clock-card');
+      document.querySelectorAll('.clock-card').forEach(c => c.classList.remove('drag-over'));
+      if (targetCard && targetCard !== touchSrc) targetCard.classList.add('drag-over');
+    }, { passive: false });
+
+    el.addEventListener('touchend', e => {
+      if (!clone) return;
+      clone.remove(); clone = null;
+      if (touchSrc) touchSrc.style.opacity = '';
+      document.querySelectorAll('.clock-card').forEach(c => c.classList.remove('drag-over'));
+      const t = e.changedTouches[0];
+      const under = document.elementFromPoint(t.clientX, t.clientY);
+      const targetCard = under?.closest('.clock-card');
+      if (targetCard && targetCard !== touchSrc) {
+        const sp = parseInt(touchSrc.dataset.pos);
+        const dp = parseInt(targetCard.dataset.pos);
+        const n = [...order];
+        const [rm] = n.splice(sp, 1);
+        n.splice(dp, 0, rm);
+        order = n;
+        buildCards();
+        updateCards();
+      }
+      touchSrc = null;
+    });
+  });
+
+  // Show drag tip on mobile
+  const isMobile = ('ontouchstart' in window);
+  const tip = document.getElementById('dragTip');
+  if (tip) tip.textContent = isMobile ? '길게 눌러 순서 변경' : '드래그로 순서 변경';
+}
+
+// ── Tick every minute, aligned to real minute boundary ──
+function scheduleTick() {
+  const now = new Date();
+  const msToNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+  setTimeout(() => {
+    updateCards();
+    updateToday();
+    setInterval(() => { updateCards(); updateToday(); }, 60000);
+  }, msToNextMinute);
 }
 
 // ── Init ──
@@ -854,15 +937,14 @@ buildTimelist();
 buildCards();
 updateCards();
 updateToday();
-setInterval(updateCards,30000);
+scheduleTick();
 
-document.getElementById('fromDate').addEventListener('change',doConvert);
-document.getElementById('fromTime').addEventListener('input',doConvert);
-document.getElementById('ampmSel').addEventListener('change',doConvert);
-document.getElementById('fromTz').addEventListener('change',doConvert);
-document.getElementById('toTz').addEventListener('change',doConvert);
+document.getElementById('fromDate').addEventListener('change', doConvert);
+document.getElementById('fromTime').addEventListener('input', doConvert);
+document.getElementById('ampmSel').addEventListener('change', doConvert);
+document.getElementById('fromTz').addEventListener('change', doConvert);
+document.getElementById('toTz').addEventListener('change', doConvert);
 doConvert();
 </script>
-
 </body>
 </html>
