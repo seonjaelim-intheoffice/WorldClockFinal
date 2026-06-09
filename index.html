@@ -46,15 +46,15 @@ body {
 
 /* ── Header ── */
 .hdr { margin-bottom: 40px; }
-h1 { font-size: 30px; font-weight: 700; letter-spacing: -0.04em; margin-bottom: 4px; }
+h1 { font-size: 45px; font-weight: 700; letter-spacing: -0.04em; margin-bottom: 4px; }
 h1 span { color: var(--blue); }
-.today-str { font-size: 13px; color: var(--text-dim); }
+.today-str { font-size: 20px; color: var(--text); }
 .year-note { font-size: 11px; color: var(--text-dim); margin-top: 2px; opacity: 0.7; }
 
 /* ── Section label ── */
 .slabel {
-  font-size: 11px; font-weight: 700; letter-spacing: 0.10em;
-  text-transform: uppercase; color: var(--text-dim); margin-bottom: 12px;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.10em;
+  text-transform: uppercase; color: var(--text-dim); margin-bottom: 20px;
 }
 
 /* ── Converter ── */
@@ -85,7 +85,7 @@ h1 span { color: var(--blue); }
 .time-combo input {
   font-family: var(--mono); font-size: 18px; font-weight: 500;
   background: transparent; border: none; outline: none;
-  padding: 12px 14px; color: var(--text); width: 95px;
+  padding: 12px 14px; color: var(--text); width: 130px;
 }
 .time-combo input::placeholder { color: var(--text-dim); font-size: 15px; font-weight: 400; }
 .ampm-sel {
@@ -126,7 +126,8 @@ h1 span { color: var(--blue); }
 .result-date { font-size: 12px; color: var(--blue-mu); }
 
 /* ── Add country ── */
-.add-section { margin-bottom: 36px; }
+#notworkingfornow
+/* .add-section { margin-bottom: 36px; }
 .add-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .add-input {
   font-family: var(--sans); font-size: 14px; background: var(--white);
@@ -153,12 +154,14 @@ h1 span { color: var(--blue); }
   border-radius: var(--r-sm); padding: 11px 20px;
   cursor: pointer; transition: background 0.15s; white-space: nowrap; flex-shrink: 0;
 }
-.add-btn:hover { background: var(--blue-h); }
+.add-btn:hover { background: var(--blue-h); } */
 
 /* ── Clock gallery ── */
 .clocks-hdr {
   display: flex; align-items: center;
-  justify-content: space-between; margin-bottom: 14px;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  padding-bottom: 10px;
 }
 .drag-tip { font-size: 12px; color: var(--text-dim); }
 #clockList {
@@ -254,8 +257,7 @@ h1 span { color: var(--blue); }
   <div class="conv-grid">
     <input type="date" id="fromDate" class="date-input">
     <div class="time-combo">
-      <input list="timeList" id="fromTime" placeholder="12:00" autocomplete="off" maxlength="5">
-      <datalist id="timeList"></datalist>
+      <input id="fromTime" placeholder="12:00" autocomplete="off" maxlength="5">
     </div>
     <select id="ampmSel" class="ampm-sel">
       <option value="AM">AM</option>
@@ -274,19 +276,8 @@ h1 span { color: var(--blue); }
   </div>
 </div>
 
-<div class="add-section">
-  <div class="slabel">국가 추가</div>
-  <div class="add-row">
-    <input type="text" class="add-input add-flag-input" id="addFlag" placeholder="🌍" maxlength="2">
-    <input type="text" class="add-input" id="addName" placeholder="국가명 (예: 일본)" style="flex:1.2" maxlength="30">
-    <select id="addTz" class="add-tz-sel"></select>
-    <button class="add-btn" id="addBtn">+ 추가</button>
-  </div>
-</div>
-
 <div class="clocks-hdr">
-  <div class="slabel" style="margin-bottom:0">현지 시각</div>
-  <div class="drag-tip" id="dragTip">드래그로 순서 변경</div>
+  <div class="slabel" style="margin-bottom:20">현지 시각</div>
 </div>
 <div id="clockList"></div>
 
@@ -303,27 +294,6 @@ function safeText(str) {
     .replace(/>/g,'&gt;').replace(/"/g,'&quot;')
     .replace(/'/g,'&#x27;');
 }
-
-// ── Timezone list for add-dropdown ──
-const ALL_TZ = [
-  ['Asia/Seoul','한국 (UTC+9)'],['Asia/Tokyo','일본 (UTC+9)'],
-  ['Asia/Ho_Chi_Minh','베트남 (UTC+7)'],['Asia/Bangkok','태국 (UTC+7)'],
-  ['Asia/Shanghai','중국 (UTC+8)'],['Asia/Singapore','싱가포르 (UTC+8)'],
-  ['Asia/Jakarta','인도네시아 (UTC+7)'],['Asia/Kolkata','인도 (UTC+5:30)'],
-  ['Asia/Dubai','UAE 두바이 (UTC+4)'],['Asia/Riyadh','사우디 (UTC+3)'],
-  ['Asia/Karachi','파키스탄 (UTC+5)'],['Asia/Dhaka','방글라데시 (UTC+6)'],
-  ['Africa/Cairo','이집트 (UTC+2/3)'],['Africa/Lagos','나이지리아 (UTC+1)'],
-  ['Africa/Johannesburg','남아공 (UTC+2)'],['Africa/Nairobi','케냐 (UTC+3)'],
-  ['Europe/London','영국 (UTC+0/1)'],['Europe/Paris','프랑스 (UTC+1/2)'],
-  ['Europe/Berlin','독일 (UTC+1/2)'],['Europe/Stockholm','스웨덴 (UTC+1/2)'],
-  ['Europe/Moscow','러시아 (UTC+3)'],['Europe/Istanbul','터키 (UTC+3)'],
-  ['America/New_York','미국 뉴욕 (UTC-5/-4)'],['America/Chicago','미국 시카고 (UTC-6/-5)'],
-  ['America/Los_Angeles','미국 LA (UTC-8/-7)'],['America/Sao_Paulo','브라질 (UTC-3)'],
-  ['America/Bogota','콜롬비아 (UTC-5)'],['America/Mexico_City','멕시코 (UTC-6/-5)'],
-  ['America/Lima','페루 (UTC-5)'],['America/Buenos_Aires','아르헨티나 (UTC-3)'],
-  ['Australia/Sydney','호주 시드니 (UTC+10/11)'],['Australia/Melbourne','호주 멜버른 (UTC+10/11)'],
-  ['Pacific/Auckland','뉴질랜드 (UTC+12/13)'],['Pacific/Honolulu','하와이 (UTC-10)'],
-];
 
 // ── Default countries ──
 let countries = [
@@ -501,22 +471,7 @@ function populateConverterSel() {
   });
 }
 
-function populateAddTz() {
-  const s = document.getElementById('addTz');
-  s.innerHTML = '';
-  ALL_TZ.forEach(([tz, label]) => s.add(new Option(label, tz)));
-}
-
 function buildTimelist() {
-  const dl = document.getElementById('timeList');
-  dl.innerHTML = '';
-  for (let h = 1; h <= 12; h++) {
-    ['00','15','30','45'].forEach(m => {
-      const o = document.createElement('option');
-      o.value = h + ':' + m;
-      dl.appendChild(o);
-    });
-  }
   const now = new Date();
   // Date default = today (browser local)
   const yyyy = now.getFullYear();
@@ -608,35 +563,6 @@ function doConvert() {
     timeZone: tt, year:'numeric', month:'long', day:'numeric', weekday:'short'
   }).format(utcMoment));
 }
-
-// ── Add country ──
-document.getElementById('addBtn').addEventListener('click', () => {
-  const flagRaw = document.getElementById('addFlag').value.trim();
-  const nameRaw = document.getElementById('addName').value.trim();
-  const tz      = document.getElementById('addTz').value;
-
-  // Validate name (sanitize: strip any HTML)
-  const name = nameRaw.replace(/[<>"'&]/g, '').trim();
-  if (!name) { alert('국가명을 입력해주세요.'); return; }
-
-  // Prevent duplicate timezone
-  if (countries.some(c => c.tz === tz)) {
-    alert('이미 추가된 시간대입니다.'); return;
-  }
-
-  // Validate flag (allow emoji or leave blank for default)
-  const flag = flagRaw || '🌍';
-
-  const id  = 'custom_' + Date.now();
-  const tzl = tzShortLabel(tz);
-  countries.push({ id, name, tz, flag, tzl });
-  order.push(countries.length - 1);
-  document.getElementById('addFlag').value = '';
-  document.getElementById('addName').value = '';
-  populateConverterSel();
-  buildCards();
-  updateCards();
-});
 
 // ── Remove country ──
 function removeCountry(idx) {
@@ -932,7 +858,6 @@ function scheduleTick() {
 
 // ── Init ──
 populateConverterSel();
-populateAddTz();
 buildTimelist();
 buildCards();
 updateCards();
